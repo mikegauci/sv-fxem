@@ -595,5 +595,38 @@
     "kind": "standalone",
     "language": "ar",
     "title": "طلب إيداع في حسابك عن طريق كاش يو"
+  },
+  {
+    "slug": "open-live-account",
+    "url": "https://sv.fxem.com/open-live-account/",
+    "kind": "page",
+    "language": "en",
+    "currentdesk": "live"
+  },
+  {
+    "slug": "open-demo-account",
+    "url": "https://sv.fxem.com/open-demo-account/",
+    "kind": "page",
+    "language": "en",
+    "currentdesk": "demo"
+  },
+  {
+    "slug": "become-our-partner",
+    "url": "https://sv.fxem.com/become-our-partner/",
+    "kind": "page",
+    "language": "en",
+    "currentdesk": "partner"
+  },
+  {
+    "slug": "live-account-created-successfully",
+    "url": "https://sv.fxem.com/live-account-created-successfully/",
+    "kind": "page",
+    "language": "en"
+  },
+  {
+    "slug": "demo-account-created-successfully",
+    "url": "https://sv.fxem.com/demo-account-created-successfully/",
+    "kind": "page",
+    "language": "en"
   }
 ]

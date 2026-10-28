@@ -7,3 +7,4 @@ dist/
 !.env.example
 migration/source/
 .DS_Store
+coverage/

@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { load } from 'cheerio';
+import { dictionaryById } from '../src/lib/currentdesk/dictionaries.mjs';
 
 const origin = 'https://sv.fxem.com/';
 const routes = JSON.parse(await fs.readFile('migration/routes.json', 'utf8'));
@@ -10,6 +11,7 @@ const assets = new Map(Object.entries(JSON.parse(await fs.readFile('migration/as
 const pending = new Map();
 const failures = [];
 const sourceIssues = [];
+const formSchemas = {};
 const inspectedImages = new Map();
 async function recordSourceImageIssue(url, output, page) {
   if (!/\.(png|jpe?g|gif|webp|ico)$/i.test(new URL(url).pathname)) return;
@@ -159,6 +161,32 @@ async function migrate(page) {
   });
   $('form').each((_, e) => {
     const form = $(e);
+    if (page.currentdesk && form.attr('id') === `${page.currentdesk}-form`) {
+      const fields = new Map();
+      form.find('input[name],select[name],textarea[name]').each((_, field) => {
+        const el = $(field), name = el.attr('name');
+        if (name === 'stage') return;
+        const existing = fields.get(name);
+        if (existing) {
+          existing.required ||= el.is('[required]');
+          if (el.attr('value')) existing.options.push(el.attr('value'));
+          return;
+        }
+        const id = el.attr('id');
+        const label = (id ? form.find(`label[for="${id}"]`).first().text() : el.closest('.form-group').find('label').first().text()).replace(/\*/g, '').trim();
+        fields.set(name, {
+          name, id, label: label || name, type: field.tagName === 'select' ? 'select' : el.attr('type') || 'text',
+          required: el.is('[required]'), panel: form.find('.panels section').index(el.closest('section')),
+          dictionary: dictionaryById[id],
+          options: el.is('select') ? el.find('option[value]').map((_, option) => option.attribs.value).get().filter(Boolean) : el.attr('value') ? [el.attr('value')] : [],
+        });
+      });
+      formSchemas[page.currentdesk] = { fields: [...fields.values()] };
+      form.attr('data-currentdesk-form', page.currentdesk).attr('action', `/api/currentdesk/${page.currentdesk}`).attr('novalidate', '');
+      form.find('.panels section').first().addClass('active');
+      form.append('<div class="currentdesk-trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>');
+      return;
+    }
     if ((form.attr('method') || 'get').toLowerCase() === 'get') {
       if (form.attr('action')) form.attr('action', normalize(form.attr('action'), base));
     } else {
@@ -181,6 +209,7 @@ async function migrate(page) {
     slug: page.slug,
     title: $('title').text(),
     kind: page.kind,
+    ...(page.currentdesk ? { currentdesk: page.currentdesk } : {}),
     htmlAttributes: $('html').attr(),
     skipLink: $('body > .skip-link').toArray().map(e => $.html(e)).join(''),
     sourceUrl: base,
@@ -203,8 +232,10 @@ async function migrate(page) {
   console.log(`Imported ${base}`);
 }
 await fs.mkdir('src/data/pages', { recursive: true });
+await fs.mkdir('src/lib/currentdesk', { recursive: true });
 // Page-level styles and body classes remain separate to preserve each design.
 for (const page of [{slug:'',url:origin,kind:'page'}, ...routes]) await migrate(page);
+await fs.writeFile('src/lib/currentdesk/schemas.json', JSON.stringify(formSchemas, null, 2) + '\n');
 await fs.writeFile('migration/assets.json', JSON.stringify(Object.fromEntries(assets), null, 2) + '\n');
 await fs.writeFile('migration/asset-errors.json', JSON.stringify(failures, null, 2) + '\n');
 await fs.writeFile('migration/source-issues.json', JSON.stringify(sourceIssues, null, 2) + '\n');

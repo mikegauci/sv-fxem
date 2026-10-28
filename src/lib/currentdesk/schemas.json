@@ -1,0 +1,1027 @@
+{
+  "live": {
+    "fields": [
+      {
+        "name": "account-preference-id",
+        "id": "preferences",
+        "label": "Account Preference",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "preferences",
+        "options": []
+      },
+      {
+        "name": "account-code-id",
+        "id": "account-code",
+        "label": "Account Type",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "account-codes",
+        "options": []
+      },
+      {
+        "name": "account-password",
+        "id": "account-password",
+        "label": "Account Password",
+        "type": "password",
+        "required": true,
+        "panel": 0,
+        "options": []
+      },
+      {
+        "name": "account-password-confirm",
+        "id": "account-password-confirm",
+        "label": "Re-type Password",
+        "type": "password",
+        "required": true,
+        "panel": 0,
+        "options": []
+      },
+      {
+        "name": "individual-first-name",
+        "id": "firstname",
+        "label": "First Name",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-middle-name",
+        "id": "middlename",
+        "label": "Middle Name",
+        "type": "text",
+        "required": false,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-last-name",
+        "id": "lastname",
+        "label": "Last Name",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-title-id",
+        "id": "titles",
+        "label": "Title",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "titles",
+        "options": []
+      },
+      {
+        "name": "individual-birth-date",
+        "id": "birthdate",
+        "label": "Birth Date",
+        "type": "date",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "account-language-id",
+        "id": "languages",
+        "label": "Preferred Language",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "languages",
+        "options": []
+      },
+      {
+        "name": "individual-citizenship-country-id",
+        "id": "citizenship",
+        "label": "Citizenship",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "nationalities",
+        "options": []
+      },
+      {
+        "name": "individual-country-of-birth-id",
+        "id": "countries",
+        "label": "Country of Birth",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "countries",
+        "options": []
+      },
+      {
+        "name": "individual-residence-country-id",
+        "id": "residence-country",
+        "label": "Country of Residence",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "countries",
+        "options": []
+      },
+      {
+        "name": "individual-occupation",
+        "id": "individual-occupation",
+        "label": "Occupation",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-employment-status-id",
+        "id": "employment-statuses",
+        "label": "Employment Status",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "employment-statuses",
+        "options": []
+      },
+      {
+        "name": "individual-employment-industry",
+        "id": "employment-industry",
+        "label": "Employment Industry",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-identification-number",
+        "id": "identification-number",
+        "label": "Identification Number",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-identification-type-id",
+        "id": "identification-types",
+        "label": "Identification Type",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "identification-types",
+        "options": []
+      },
+      {
+        "name": "individual-gender-id",
+        "label": "Gender",
+        "type": "radio",
+        "required": true,
+        "panel": 1,
+        "options": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "name": "individual-address",
+        "id": "address",
+        "label": "Address",
+        "type": "text",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-address-city",
+        "id": "individual-address-city",
+        "label": "City",
+        "type": "text",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-address-country-id",
+        "id": "address-country",
+        "label": "Country",
+        "type": "select",
+        "required": true,
+        "panel": 2,
+        "dictionary": "countries",
+        "options": []
+      },
+      {
+        "name": "individual-address-postal-code",
+        "id": "address-postal-code",
+        "label": "Postal Code",
+        "type": "text",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-telephone",
+        "id": "individual-telephone",
+        "label": "Mobile Number",
+        "type": "tel",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-email",
+        "id": "email",
+        "label": "Email Address",
+        "type": "email",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "trading-spot-experience-id",
+        "id": "spot-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-spot-experience-source-id",
+        "id": "spot-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-spot-trades-per-month",
+        "id": "spot-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-spot-average-deal-size",
+        "id": "spot-average-deal-size",
+        "label": "Average Deal Size (Lots)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-shares-experience-id",
+        "id": "shares-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-shares-experience-source-id",
+        "id": "shares-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-shares-trades-per-month",
+        "id": "shares-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-shares-average-deal-size",
+        "id": "shares-average-deal-size",
+        "label": "Average Deal Size (Shares)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-futures-experience-id",
+        "id": "futures-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-futures-experience-source-id",
+        "id": "futures-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-futures-trades-per-month",
+        "id": "futures-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-futures-average-deal-size",
+        "id": "futures-average-deal-size",
+        "label": "Average Deal Size (Futures)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-options-experience-id",
+        "id": "options-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-options-experience-source-id",
+        "id": "options-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-options-trades-per-month",
+        "id": "options-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-options-average-deal-size",
+        "id": "options-average-deal-size",
+        "label": "Average Deal Size (Contracts)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "regulation-registration-status",
+        "label": "Do you have or have you ever held any other account with us?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "financial-bankruptcy-status",
+        "label": "Have you ever declared bankruptcy?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "regulation-employee-history-status",
+        "label": "Have you ever been a registered person/entity with CFTC, NFA, SEC, FINRA, FCA, BaFin, etc?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "regulation-employee-status",
+        "label": "Are you an employee of an exchange or regulator organization?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "terms",
+        "label": "Yes, I agree to FXEM Terms and Conditions",
+        "type": "checkbox",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "on"
+        ]
+      }
+    ]
+  },
+  "demo": {
+    "fields": [
+      {
+        "name": "account-preference-id",
+        "id": "preferences",
+        "label": "Account Preference",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "preferences",
+        "options": []
+      },
+      {
+        "name": "trading-experience-id",
+        "id": "experiences",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-average-deal-size-id",
+        "id": "average-deal-sizes",
+        "label": "Average Ticket Size",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "average-deal-sizes",
+        "options": []
+      },
+      {
+        "name": "financial-initial-deposit-id",
+        "id": "initial-deposits",
+        "label": "Initial Investment",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "initial-deposits",
+        "options": []
+      },
+      {
+        "name": "lead-first-name",
+        "id": "firstname",
+        "label": "First Name",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "lead-last-name",
+        "id": "lastname",
+        "label": "Last Name",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "lead-email",
+        "id": "email",
+        "label": "Email Address",
+        "type": "email",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "lead-telephone",
+        "id": "phone",
+        "label": "Telephone Number",
+        "type": "tel",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "lead-title-id",
+        "id": "titles",
+        "label": "Title",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "titles",
+        "options": []
+      },
+      {
+        "name": "lead-residence-country-id",
+        "id": "countries",
+        "label": "Country of Residence",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "countries",
+        "options": []
+      },
+      {
+        "name": "lead-language-id",
+        "id": "languages",
+        "label": "Language",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "languages",
+        "options": []
+      },
+      {
+        "name": "english-status",
+        "id": "english-status",
+        "label": "english-status",
+        "type": "checkbox",
+        "required": false,
+        "panel": 1,
+        "options": [
+          "on"
+        ]
+      },
+      {
+        "name": "terms",
+        "label": "Yes, I agree to FXEM Terms and Conditions",
+        "type": "checkbox",
+        "required": true,
+        "panel": 1,
+        "options": [
+          "on"
+        ]
+      }
+    ]
+  },
+  "partner": {
+    "fields": [
+      {
+        "name": "account-preference-id",
+        "id": "preferences",
+        "label": "Account Preference",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "preferences",
+        "options": []
+      },
+      {
+        "name": "account-code-id",
+        "id": "account-code",
+        "label": "Account Type",
+        "type": "select",
+        "required": true,
+        "panel": 0,
+        "dictionary": "account-codes",
+        "options": []
+      },
+      {
+        "name": "account-password",
+        "id": "account-password",
+        "label": "Account Password",
+        "type": "password",
+        "required": true,
+        "panel": 0,
+        "options": []
+      },
+      {
+        "name": "account-password-confirm",
+        "id": "account-password-confirm",
+        "label": "Re-type Password",
+        "type": "password",
+        "required": true,
+        "panel": 0,
+        "options": []
+      },
+      {
+        "name": "individual-first-name",
+        "id": "firstname",
+        "label": "First Name",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-middle-name",
+        "id": "middlename",
+        "label": "Middle Name",
+        "type": "text",
+        "required": false,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-last-name",
+        "id": "lastname",
+        "label": "Last Name",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-title-id",
+        "id": "titles",
+        "label": "Title",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "titles",
+        "options": []
+      },
+      {
+        "name": "individual-birth-date",
+        "id": "birthdate",
+        "label": "Birth Date",
+        "type": "date",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "account-language-id",
+        "id": "languages",
+        "label": "Preferred Language",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "languages",
+        "options": []
+      },
+      {
+        "name": "individual-citizenship-country-id",
+        "id": "citizenship",
+        "label": "Citizenship",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "nationalities",
+        "options": []
+      },
+      {
+        "name": "individual-country-of-birth-id",
+        "id": "countries",
+        "label": "Country of Birth",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "countries",
+        "options": []
+      },
+      {
+        "name": "individual-residence-country-id",
+        "id": "residence-country",
+        "label": "Country of Residence",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "countries",
+        "options": []
+      },
+      {
+        "name": "individual-occupation",
+        "id": "individual-occupation",
+        "label": "Occupation",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-employment-status-id",
+        "id": "employment-statuses",
+        "label": "Employment Status",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "employment-statuses",
+        "options": []
+      },
+      {
+        "name": "individual-employment-industry",
+        "id": "employment-industry",
+        "label": "Employment Industry",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-identification-number",
+        "id": "identification-number",
+        "label": "Identification Number",
+        "type": "text",
+        "required": true,
+        "panel": 1,
+        "options": []
+      },
+      {
+        "name": "individual-identification-type-id",
+        "id": "identification-types",
+        "label": "Identification Type",
+        "type": "select",
+        "required": true,
+        "panel": 1,
+        "dictionary": "identification-types",
+        "options": []
+      },
+      {
+        "name": "individual-gender-id",
+        "label": "Gender",
+        "type": "radio",
+        "required": true,
+        "panel": 1,
+        "options": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "name": "individual-address",
+        "id": "address",
+        "label": "Address",
+        "type": "text",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-address-city",
+        "id": "individual-address-city",
+        "label": "City",
+        "type": "text",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-address-country-id",
+        "id": "address-country",
+        "label": "Country",
+        "type": "select",
+        "required": true,
+        "panel": 2,
+        "dictionary": "countries",
+        "options": []
+      },
+      {
+        "name": "individual-address-postal-code",
+        "id": "address-postal-code",
+        "label": "Postal Code",
+        "type": "text",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-telephone",
+        "id": "individual-telephone",
+        "label": "Mobile Number",
+        "type": "tel",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "individual-email",
+        "id": "email",
+        "label": "Email Address",
+        "type": "email",
+        "required": true,
+        "panel": 2,
+        "options": []
+      },
+      {
+        "name": "trading-spot-experience-id",
+        "id": "spot-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-spot-experience-source-id",
+        "id": "spot-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-spot-trades-per-month",
+        "id": "spot-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-spot-average-deal-size",
+        "id": "spot-average-deal-size",
+        "label": "Average Deal Size (Lots)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-shares-experience-id",
+        "id": "shares-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-shares-experience-source-id",
+        "id": "shares-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-shares-trades-per-month",
+        "id": "shares-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-shares-average-deal-size",
+        "id": "shares-average-deal-size",
+        "label": "Average Deal Size (Shares)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-futures-experience-id",
+        "id": "futures-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-futures-experience-source-id",
+        "id": "futures-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-futures-trades-per-month",
+        "id": "futures-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-futures-average-deal-size",
+        "id": "futures-average-deal-size",
+        "label": "Average Deal Size (Futures)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-options-experience-id",
+        "id": "options-experience",
+        "label": "Years Experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experiences",
+        "options": []
+      },
+      {
+        "name": "trading-options-experience-source-id",
+        "id": "options-experience-source",
+        "label": "How have you gained the experience",
+        "type": "select",
+        "required": true,
+        "panel": 3,
+        "dictionary": "experience-sources",
+        "options": []
+      },
+      {
+        "name": "trading-options-trades-per-month",
+        "id": "options-trades-per-month",
+        "label": "Trades Per Month",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "trading-options-average-deal-size",
+        "id": "options-average-deal-size",
+        "label": "Average Deal Size (Contracts)",
+        "type": "text",
+        "required": true,
+        "panel": 3,
+        "options": []
+      },
+      {
+        "name": "regulation-registration-status",
+        "label": "Do you have or have you ever held any other account with us?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "financial-bankruptcy-status",
+        "label": "Have you ever declared bankruptcy?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "regulation-employee-history-status",
+        "label": "Have you ever been a registered person/entity with CFTC, NFA, SEC, FINRA, FCA, BaFin, etc?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "regulation-employee-status",
+        "label": "Are you an employee of an exchange or regulator organization?",
+        "type": "radio",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "name": "terms",
+        "label": "Yes, I agree to FXEM Terms and Conditions",
+        "type": "checkbox",
+        "required": true,
+        "panel": 3,
+        "options": [
+          "on"
+        ]
+      }
+    ]
+  }
+}

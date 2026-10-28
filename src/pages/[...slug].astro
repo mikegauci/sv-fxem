@@ -1,4 +1,5 @@
 ---
+import CurrentDeskFormScripts from '../components/CurrentDeskFormScripts.astro';
 export function getStaticPaths() {
   const pages = import.meta.glob('../data/pages/*.json', { eager: true, import: 'default' });
   return Object.values(pages).map((page: any) => ({ params: { slug: page.slug }, props: { page } }));
@@ -18,5 +19,6 @@ const { page } = Astro.props;
       </div>
     </>}
     <Fragment set:html={page.scripts} />
+    {page.currentdesk && <CurrentDeskFormScripts />}
   </body>
 </html>

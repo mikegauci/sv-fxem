@@ -1,19 +1,26 @@
 {
-  "pages": 62,
+  "pages": 67,
   "arabicPages": 31,
+  "currentDeskForms": 3,
   "contentMatchesOriginal": true,
-  "bodyClassesAndTitlesMatchOriginal": true,
   "htmlLanguageAndDirectionMatchOriginal": true,
-  "localAssetReferences": 2188,
-  "localLinks": 3351,
-  "excludedPagesNotBuilt": true,
-  "postFormsPreviewOnly": true,
+  "localAssetReferences": 2349,
+  "localLinks": 4340,
+  "secretsAbsentFromPublicOutput": true,
+  "publicFilesScanned": 461,
+  "deferredPagesNotBuilt": true,
+  "mockedApiTests": 26,
+  "liveApiDictionaryKinds": [
+    "live",
+    "demo",
+    "partner"
+  ],
+  "realRegistrationSubmissionsTested": false,
   "browserChecks": [
-    "Arabic homepage compared with source",
-    "Arabic FAQ expansion",
-    "Arabic product tab switching",
-    "English-to-Arabic and Arabic-to-English language switching",
-    "Deployed Arabic archive URL with Arabic characters",
-    "Legacy Arabic deposit language query on Vercel"
+    "Demo required-field validation",
+    "Demo forward/back navigation preserves selections",
+    "Deployed live form: 18 dropdowns populated",
+    "Deployed partner form: 18 dropdowns populated",
+    "Deployed demo form: 7 dropdowns populated"
   ]
 }

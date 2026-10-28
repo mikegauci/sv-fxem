@@ -1,8 +1,9 @@
 {
   "projectId": "prj_p7KwRAZfQbOEJfi8QAGUabno1ZZK",
-  "deploymentId": "dpl_Cjbhu81FqBn2Rv1QgyioNnBVZHoE",
-  "url": "https://sv-fxem-31cuw72mr-mikegaucis-projects.vercel.app",
+  "deploymentId": "dpl_76gasEBCS5XJNqv21EpYs3x7xyQ3",
+  "url": "https://sv-fxem-9442vdn4p-mikegaucis-projects.vercel.app",
   "environment": "preview",
-  "pages": 31,
+  "pages": 62,
+  "arabicPages": 31,
   "productionDomainChanged": false
 }

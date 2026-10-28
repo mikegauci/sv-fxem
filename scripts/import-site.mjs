@@ -80,10 +80,12 @@ function routeLink(href, base) {
   if (!href || /^(#|mailto:|tel:|javascript:)/i.test(href)) return href;
   // This relative Contact Us link in the source FAQ points at a nonexistent
   // child URL. Keep the deferred contact destination on the original site.
-  if (href === 'contact-us') return `${origin}contact-us/`;
+  if (href === 'contact-us') return `${origin}${new URL(base).pathname.startsWith('/ar/') ? 'ar/' : ''}contact-us/`;
   const url = new URL(normalize(href, base));
   if (url.hostname !== 'sv.fxem.com') return url.href;
-  const pathname = url.pathname === '/' ? '/' : `${url.pathname.replace(/\/$/, '')}/`;
+  const decoded = decodeURIComponent(url.pathname);
+  const pathname = decoded === '/' ? '/' : `${decoded.replace(/\/$/, '')}/`;
+  if (pathname === '/deposit_request/' && url.searchParams.get('lang') === 'ar' && included.has('/ar/deposit_request/')) return '/ar/deposit_request/' + url.hash;
   if (included.has(pathname) && (!url.search || url.search === '?lang=en')) return pathname + url.hash;
   return url.href;
 }
@@ -170,12 +172,19 @@ async function migrate(page) {
   }));
   $('head').append(`<meta name="robots" content="noindex, nofollow"><link rel="canonical" href="${base}">`);
   const footerStyles = $('body > style, body > link[rel=stylesheet]').toArray().map(e => $.html(e)).join('\n');
+  // Static servers ignore language query strings when choosing an HTML file.
+  // Route this legacy form URL before paint, including in local Astro previews.
+  const legacyLanguageRedirect = page.slug === 'deposit_request' && included.has('/ar/deposit_request/')
+    ? '<script>if(new URLSearchParams(location.search).get("lang")==="ar"){location.replace("/ar/deposit_request/"+location.search+location.hash);}</script>'
+    : '';
   const rendered = {
     slug: page.slug,
     title: $('title').text(),
     kind: page.kind,
+    htmlAttributes: $('html').attr(),
+    skipLink: $('body > .skip-link').toArray().map(e => $.html(e)).join(''),
     sourceUrl: base,
-    head: $('head').html() + '\n' + footerStyles,
+    head: legacyLanguageRedirect + $('head').html() + '\n' + footerStyles,
     bodyAttributes: $('body').attr(),
     header: $('#page > .en-content, #page > .ar-content, #masthead').toArray().map(e => $.html(e)).join('\n'),
     standalone,

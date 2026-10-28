@@ -13,5 +13,20 @@
     "type": "source-image-returns-html",
     "url": "https://fxem.com/wp-content/uploads/2019/05/fxem-final-logo.png",
     "page": "https://sv.fxem.com/deposit_request/?lang=en"
+  },
+  {
+    "type": "malformed-source-media-url",
+    "value": "\\\"https://websitedemos.net/entrepreneur-07/wp-content/uploads/sites/390/2018/12/blog1-free-img-1024x597.jpg\\\"",
+    "page": "https://sv.fxem.com/ar/look-at-your-business-from-a-new-perspective/"
+  },
+  {
+    "type": "malformed-source-media-url",
+    "value": "\\\"https://websitedemos.net/entrepreneur-07/wp-content/uploads/sites/390/2018/12/social-advert-1024x597.jpg\\\"",
+    "page": "https://sv.fxem.com/ar/25-technics-for-getting-fast-social-media-exposure/"
+  },
+  {
+    "type": "source-image-returns-html",
+    "url": "https://fxem.com/wp-content/uploads/2019/05/fxem-final-logo.png",
+    "page": "https://sv.fxem.com/deposit_request/?lang=ar"
   }
 ]

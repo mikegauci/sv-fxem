@@ -1,6 +1,6 @@
 # FXEM — Astro design preview
 
-The English content from `https://sv.fxem.com/` is reproduced in a static Astro site. The preview contains 31 routes: the homepage, 23 additional WordPress content pages, three articles, three article archives, and the standalone English CashU deposit-request design.
+The English and Arabic content from `https://sv.fxem.com/` is reproduced in a static Astro site. The preview contains 62 routes, split equally between the two languages. Each language includes its homepage, 23 additional WordPress content pages, three articles, three article archives, and the standalone CashU deposit-request design.
 
 Original copy, page-specific styles, body classes, spacing, imagery, fonts, icons, menus, accordions, tabs, tables and third-party embeds are retained. No PHP or WordPress server is needed to build or serve the Astro pages.
 
@@ -8,12 +8,13 @@ Original copy, page-specific styles, body classes, spacing, imagery, fonts, icon
 
 The following remain on the existing site and are intentionally not migrated:
 
-- All Arabic translations.
 - Open Live Account and Open Demo Account, including their success pages.
 - Become Our Partner.
 - Contact Us.
 
-Navigation between migrated English pages stays within the preview. Deferred pages, client/partner logins, platform downloads and external services keep their original destinations. Search uses the original search endpoint.
+Navigation between migrated pages and both language switchers stays within the preview. Arabic pages retain the source `lang`, `dir`, RTL styles, menus, carousel settings and text. Existing source sections that are untranslated remain unchanged. Deferred pages in both languages, client/partner logins, platform downloads and external services keep their original destinations. Search uses the original search endpoint.
+
+The Arabic CashU design is served at `/ar/deposit_request/`; a Vercel temporary redirect maps the original `/deposit_request/?lang=ar` request to that route. A small head script also supports this language-query URL on local/static servers. The English version remains at `/deposit_request/`.
 
 Comments and the CashU request form retain their visual design, but preview submission is disabled. No payment processing, comment posting, account creation or email integration is enabled. A status message appears if one of these preview forms is submitted.
 
@@ -36,9 +37,9 @@ npm run dev
 npm run build
 ```
 
-Homepage fragments live in `src/content/`. Other page snapshots live in `src/data/pages/`, rendered with their individual head styles, header, content, footer and body classes by `src/pages/[...slug].astro`.
+English homepage fragments live in `src/content/`. Other page snapshots, including the Arabic homepage, live in `src/data/pages/`, rendered with their individual HTML language/direction, head styles, header, content, footer and body classes by `src/pages/[...slug].astro`.
 
-The original visual assets and browser-side vendor scripts are in `public/assets/`; original vendor license headers are retained. `migration/assets.json` records the source URL for each asset. `migration/routes.json` records the English route inventory.
+The original visual assets and browser-side vendor scripts are in `public/assets/`; original vendor license headers are retained. `migration/assets.json` records the source URL for each asset. `migration/routes.json` records the bilingual route inventory.
 
 `npm run import:site` rebuilds editable page snapshots and localizes media/CSS/font references. Missing raw sources are fetched from their public original URLs. Add `-- --refresh` to capture pages again. Raw source HTML is gitignored. `import:homepage` is a compatibility alias to the full importer so homepage links stay consistent with the migrated route inventory.
 

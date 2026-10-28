@@ -9,8 +9,9 @@ document.querySelectorAll('form[data-preview-form]').forEach(form => {
       status.setAttribute('role', 'status');
       form.append(status);
     }
+    const arabic = document.documentElement.lang.startsWith('ar');
     status.textContent = form.dataset.previewForm === 'deposit'
-      ? 'This is a design preview. Payments are not enabled.'
-      : 'Comments are not enabled on this preview.';
+      ? (arabic ? 'هذه معاينة للتصميم فقط. المدفوعات غير مفعّلة.' : 'This is a design preview. Payments are not enabled.')
+      : (arabic ? 'التعليقات غير مفعّلة في هذه المعاينة.' : 'Comments are not enabled on this preview.');
   });
 });

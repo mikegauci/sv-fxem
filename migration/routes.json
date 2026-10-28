@@ -378,5 +378,222 @@
     "title": "Deposit funds to your account using CashU",
     "kind": "standalone",
     "status": 200
+  },
+  {
+    "slug": "ar/products",
+    "url": "https://sv.fxem.com/ar/products/",
+    "title": "Products – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/market-briefings",
+    "url": "https://sv.fxem.com/ar/market-briefings/",
+    "title": "Market Briefings – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/regulations",
+    "url": "https://sv.fxem.com/ar/regulations/",
+    "title": "Regulations – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/careers",
+    "url": "https://sv.fxem.com/ar/careers/",
+    "title": "Careers – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/faqs",
+    "url": "https://sv.fxem.com/ar/faqs/",
+    "title": "FAQs – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/about-us",
+    "url": "https://sv.fxem.com/ar/about-us/",
+    "title": "About Us – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/glossary",
+    "url": "https://sv.fxem.com/ar/glossary/",
+    "title": "Glossary – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/webinars",
+    "url": "https://sv.fxem.com/ar/webinars/",
+    "title": "Webinars – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/forex-seminars",
+    "url": "https://sv.fxem.com/ar/forex-seminars/",
+    "title": "Forex Seminars – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/why-trade-forex",
+    "url": "https://sv.fxem.com/ar/why-trade-forex/",
+    "title": "Why Trade Forex – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/fxem-academy",
+    "url": "https://sv.fxem.com/ar/fxem-academy/",
+    "title": "FXEM Academy – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/trading-competitions",
+    "url": "https://sv.fxem.com/ar/trading-competitions/",
+    "title": "Trading Competitions – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/forex-calculators",
+    "url": "https://sv.fxem.com/ar/forex-calculators/",
+    "title": "Forex Calculators – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/economic-calendar",
+    "url": "https://sv.fxem.com/ar/economic-calendar/",
+    "title": "Economic Calendar – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/news",
+    "url": "https://sv.fxem.com/ar/news/",
+    "title": "News – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/institutional-business",
+    "url": "https://sv.fxem.com/ar/institutional-business/",
+    "title": "Institutional Business – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/our-partners",
+    "url": "https://sv.fxem.com/ar/our-partners/",
+    "title": "Our Partners – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/mt4-for-android",
+    "url": "https://sv.fxem.com/ar/mt4-for-android/",
+    "title": "MT4 For Android – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/mt4-for-ios",
+    "url": "https://sv.fxem.com/ar/mt4-for-ios/",
+    "title": "MT4 For iOS – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/mt4-for-pc",
+    "url": "https://sv.fxem.com/ar/mt4-for-pc/",
+    "title": "MT4 For PC – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/trading-platforms",
+    "url": "https://sv.fxem.com/ar/trading-platforms/",
+    "title": "Trading Platforms – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/deposit-and-withdrawal",
+    "url": "https://sv.fxem.com/ar/deposit-and-withdrawal/",
+    "title": "Deposit and Withdrawal – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/trading-accounts",
+    "url": "https://sv.fxem.com/ar/trading-accounts/",
+    "title": "Trading Accounts – FXEM",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar",
+    "url": "https://sv.fxem.com/ar/",
+    "title": "FXEM – Your Trusted Financial Broker",
+    "kind": "page",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/look-at-your-business-from-a-new-perspective",
+    "url": "https://sv.fxem.com/ar/look-at-your-business-from-a-new-perspective/",
+    "title": "Look at your Business from a new perspective – FXEM",
+    "kind": "post",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/how-you-can-also-be-a-billionaire",
+    "url": "https://sv.fxem.com/ar/how-you-can-also-be-a-billionaire/",
+    "title": "How you can also be a billionaire? – FXEM",
+    "kind": "post",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/25-technics-for-getting-fast-social-media-exposure",
+    "url": "https://sv.fxem.com/ar/25-technics-for-getting-fast-social-media-exposure/",
+    "title": "25 foolproof Technics for getting fast Social Media exposure – FXEM",
+    "kind": "post",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/category/posts-ar",
+    "url": "https://sv.fxem.com/ar/category/posts-ar/",
+    "title": "Posts – FXEM",
+    "kind": "archive",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/category/غير-مصنف",
+    "url": "https://sv.fxem.com/ar/category/%d8%ba%d9%8a%d8%b1-%d9%85%d8%b5%d9%86%d9%81/",
+    "title": "غير مصنف – FXEM",
+    "kind": "archive",
+    "language": "ar"
+  },
+  {
+    "slug": "ar/author/admin",
+    "url": "https://sv.fxem.com/ar/author/admin/",
+    "kind": "archive",
+    "language": "ar",
+    "title": "admin – FXEM"
+  },
+  {
+    "slug": "ar/deposit_request",
+    "url": "https://sv.fxem.com/deposit_request/?lang=ar",
+    "kind": "standalone",
+    "language": "ar",
+    "title": "طلب إيداع في حسابك عن طريق كاش يو"
   }
 ]

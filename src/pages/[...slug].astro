@@ -1,0 +1,22 @@
+---
+export function getStaticPaths() {
+  const pages = import.meta.glob('../data/pages/*.json', { eager: true, import: 'default' });
+  return Object.values(pages).map((page: any) => ({ params: { slug: page.slug }, props: { page } }));
+}
+const { page } = Astro.props;
+---
+<!doctype html>
+<html lang="en-US">
+  <head><Fragment set:html={page.head} /></head>
+  <body {...page.bodyAttributes}>
+    {page.standalone ? <Fragment set:html={page.content} /> : <>
+      <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+      <div class="hfeed site" id="page">
+        <Fragment set:html={page.header} />
+      <Fragment set:html={page.content} />
+      <Fragment set:html={page.footer} />
+      </div>
+    </>}
+    <Fragment set:html={page.scripts} />
+  </body>
+</html>

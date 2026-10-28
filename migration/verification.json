@@ -1,13 +1,13 @@
 {
-  "pages": 67,
-  "arabicPages": 31,
-  "currentDeskForms": 3,
+  "pages": 70,
+  "arabicPages": 34,
+  "currentDeskForms": 6,
   "contentMatchesOriginal": true,
   "htmlLanguageAndDirectionMatchOriginal": true,
-  "localAssetReferences": 2349,
-  "localLinks": 4340,
+  "localAssetReferences": 2393,
+  "localLinks": 4694,
   "secretsAbsentFromPublicOutput": true,
-  "publicFilesScanned": 461,
+  "publicFilesScanned": 467,
   "deferredPagesNotBuilt": true,
   "mockedApiTests": 26,
   "liveApiDictionaryKinds": [
@@ -17,10 +17,10 @@
   ],
   "realRegistrationSubmissionsTested": false,
   "browserChecks": [
-    "Demo required-field validation",
-    "Demo forward/back navigation preserves selections",
-    "Deployed live form: 18 dropdowns populated",
-    "Deployed partner form: 18 dropdowns populated",
-    "Deployed demo form: 7 dropdowns populated"
+    "Arabic demo required-field validation",
+    "Arabic demo forward/back navigation preserves selections",
+    "Deployed Arabic live form: 18 dropdowns populated",
+    "Deployed Arabic partner form: 18 dropdowns populated",
+    "Deployed Arabic demo form: 7 dropdowns populated"
   ]
 }

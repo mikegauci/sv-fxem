@@ -628,5 +628,26 @@
     "url": "https://sv.fxem.com/demo-account-created-successfully/",
     "kind": "page",
     "language": "en"
+  },
+  {
+    "slug": "ar/open-live-account",
+    "url": "https://sv.fxem.com/ar/open-live-account/",
+    "kind": "page",
+    "language": "ar",
+    "currentdesk": "live"
+  },
+  {
+    "slug": "ar/open-demo-account",
+    "url": "https://sv.fxem.com/ar/open-demo-account/",
+    "kind": "page",
+    "language": "ar",
+    "currentdesk": "demo"
+  },
+  {
+    "slug": "ar/become-our-partner",
+    "url": "https://sv.fxem.com/ar/become-our-partner/",
+    "kind": "page",
+    "language": "ar",
+    "currentdesk": "partner"
   }
 ]

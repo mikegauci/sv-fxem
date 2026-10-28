@@ -1,6 +1,6 @@
 # FXEM — Astro design preview
 
-The English and Arabic content from `https://sv.fxem.com/` is reproduced in Astro. The preview contains 67 content routes: 36 English and 31 Arabic. Content is statically generated; the English live-account, demo-account and partner forms use server-side Astro API endpoints on Vercel.
+The English and Arabic content from `https://sv.fxem.com/` is reproduced in Astro. The preview contains 70 content routes: 36 English and 34 Arabic. Content is statically generated; the English and Arabic live-account, demo-account and partner forms use server-side Astro API endpoints on Vercel.
 
 Original copy, page-specific styles, body classes, spacing, imagery, fonts, icons, menus, accordions, tabs, tables and third-party embeds are retained. No PHP or WordPress server is needed to build or serve the Astro pages.
 
@@ -8,7 +8,6 @@ Original copy, page-specific styles, body classes, spacing, imagery, fonts, icon
 
 The following remain on the existing site and are intentionally not migrated:
 
-- Arabic Open Live Account, Open Demo Account and Become Our Partner.
 - Contact Us in both languages.
 
 Navigation between migrated pages and both language switchers stays within the preview. Arabic pages retain the source `lang`, `dir`, RTL styles, menus, carousel settings and text. Existing source sections that are untranslated remain unchanged. Deferred pages in both languages, client/partner logins, platform downloads and external services keep their original destinations. Search uses the original search endpoint.
@@ -17,13 +16,13 @@ The Arabic CashU design is served at `/ar/deposit_request/`; a Vercel temporary 
 
 Comments and the CashU request form retain their visual design, but their submissions remain disabled. A status message appears if one of these preview-only forms is submitted.
 
-The three English registration forms are connected to CurrentDesk as described below. English live/demo success pages are included.
+The six English and Arabic registration forms are connected to CurrentDesk as described below. English live/demo success pages are included. The original Arabic forms use the same CurrentDesk scripts, field contract and success destinations as English. Arabic page layout/copy and the Arabic demo registration heading are preserved; untranslated original form labels remain in English. The importer checks both language schemas match before sharing validation rules.
 
 The original TradingView, Investing.com calculator and LiveChat embeds remain external services. No chat messages or account/payment submissions were sent during verification.
 
 ## CurrentDesk registration
 
-The English `/open-live-account/`, `/open-demo-account/` and `/become-our-partner/` pages preserve their original fields and multistep design. Their PHP handlers have been replaced with `/api/currentdesk/live`, `/api/currentdesk/demo` and `/api/currentdesk/partner` Astro endpoints, using the Vercel adapter. PHP files, PHAR packages and source error logs are not deployed.
+The `/open-live-account/`, `/open-demo-account/` and `/become-our-partner/` pages and their `/ar/` equivalents preserve their original fields and multistep design. Their PHP handlers have been replaced with `/api/currentdesk/live`, `/api/currentdesk/demo` and `/api/currentdesk/partner` Astro endpoints, using the Vercel adapter. PHP files, PHAR packages and source error logs are not deployed.
 
 Credentials are server-only environment variables (`.env` locally, encrypted Preview variables on Vercel):
 

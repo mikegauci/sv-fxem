@@ -1,14 +1,19 @@
 {
   "projectId": "prj_p7KwRAZfQbOEJfi8QAGUabno1ZZK",
-  "deploymentId": "dpl_3gGGiQP4nEpvPkbfu8LLXkvGG2uu",
-  "url": "https://sv-fxem-ktc2pca6k-mikegaucis-projects.vercel.app",
+  "deploymentId": "dpl_mtHHfX5HBV1h12VTF3r6fwqF7xFC",
+  "url": "https://sv-fxem-7qtx7pu77-mikegaucis-projects.vercel.app",
   "environment": "preview",
-  "pages": 67,
-  "arabicPages": 31,
+  "pages": 70,
+  "arabicPages": 34,
   "currentDeskEnglishForms": [
     "live",
     "demo",
     "partner"
   ],
-  "productionDomainChanged": false
+  "productionDomainChanged": false,
+  "currentDeskArabicForms": [
+    "live",
+    "demo",
+    "partner"
+  ]
 }

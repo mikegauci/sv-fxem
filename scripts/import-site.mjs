@@ -181,7 +181,13 @@ async function migrate(page) {
           options: el.is('select') ? el.find('option[value]').map((_, option) => option.attribs.value).get().filter(Boolean) : el.attr('value') ? [el.attr('value')] : [],
         });
       });
-      formSchemas[page.currentdesk] = { fields: [...fields.values()] };
+      const schema = { fields: [...fields.values()] };
+      // Both language versions share an API contract; fail on schema drift
+      // instead of silently replacing the English validation rules.
+      if (formSchemas[page.currentdesk] && JSON.stringify(formSchemas[page.currentdesk]) !== JSON.stringify(schema)) {
+        throw Error(`CurrentDesk language schema mismatch: ${base}`);
+      }
+      formSchemas[page.currentdesk] = schema;
       form.attr('data-currentdesk-form', page.currentdesk).attr('action', `/api/currentdesk/${page.currentdesk}`).attr('novalidate', '');
       form.find('.panels section').first().addClass('active');
       form.append('<div class="currentdesk-trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>');

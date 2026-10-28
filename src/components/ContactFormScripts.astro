@@ -1,0 +1,11 @@
+<script>
+  import '../scripts/contact-forms.js';
+</script>
+<style is:global>
+  [data-contact-form] .contact-trap {position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important;}
+  [data-contact-form] .wpcf7-response-output[hidden] {display:none!important;}
+  [data-contact-form] .wpcf7-response-output:not([hidden]) {display:block!important;border-color:#55b8c4;}
+  [data-contact-form] .wpcf7-response-output.contact-error {border-color:#b42318;}
+  [data-contact-form] [aria-invalid="true"] {border-color:#b42318!important;}
+  [data-contact-form] [type=submit]:disabled {opacity:.6;cursor:wait;}
+</style>

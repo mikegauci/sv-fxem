@@ -80,9 +80,8 @@ async function css(text, base) {
 }
 function routeLink(href, base) {
   if (!href || /^(#|mailto:|tel:|javascript:)/i.test(href)) return href;
-  // This relative Contact Us link in the source FAQ points at a nonexistent
-  // child URL. Keep the deferred contact destination on the original site.
-  if (href === 'contact-us') return `${origin}${new URL(base).pathname.startsWith('/ar/') ? 'ar/' : ''}contact-us/`;
+  // The source FAQ uses a relative URL that would resolve as a child page.
+  if (href === 'contact-us') return `${new URL(base).pathname.startsWith('/ar/') ? '/ar/' : '/'}contact-us/`;
   const url = new URL(normalize(href, base));
   if (url.hostname !== 'sv.fxem.com') return url.href;
   const decoded = decodeURIComponent(url.pathname);
@@ -161,6 +160,16 @@ async function migrate(page) {
   });
   $('form').each((_, e) => {
     const form = $(e);
+    if (page.contact && form.hasClass('wpcf7-form')) {
+      form.attr('data-contact-form', page.language || 'en').attr('action', '/api/contact').attr('novalidate', '');
+      form.find('input[name^="_wpcf7"]').remove();
+      form.find('[aria-required="true"]').attr('required', '');
+      for (const [name, label, max] of [['your-name', 'Your name', 100], ['your-email', 'Your e-mail', 254], ['your-subject', 'Subject', 200], ['your-message', 'Message', 5000]]) {
+        form.find(`[name="${name}"]`).attr('aria-label', label).attr('maxlength', max);
+      }
+      form.append('<div class="contact-trap" aria-hidden="true"><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>');
+      return;
+    }
     if (page.currentdesk && form.attr('id') === `${page.currentdesk}-form`) {
       const fields = new Map();
       form.find('input[name],select[name],textarea[name]').each((_, field) => {
@@ -216,6 +225,7 @@ async function migrate(page) {
     title: $('title').text(),
     kind: page.kind,
     ...(page.currentdesk ? { currentdesk: page.currentdesk } : {}),
+    ...(page.contact ? { contact: true } : {}),
     htmlAttributes: $('html').attr(),
     skipLink: $('body > .skip-link').toArray().map(e => $.html(e)).join(''),
     sourceUrl: base,

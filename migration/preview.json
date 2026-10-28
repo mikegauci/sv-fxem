@@ -1,10 +1,10 @@
 {
   "projectId": "prj_p7KwRAZfQbOEJfi8QAGUabno1ZZK",
-  "deploymentId": "dpl_mtHHfX5HBV1h12VTF3r6fwqF7xFC",
-  "url": "https://sv-fxem-7qtx7pu77-mikegaucis-projects.vercel.app",
+  "deploymentId": "dpl_6hUVKcAoe9dBUne9vwTt5r9gvsQF",
+  "url": "https://sv-fxem-cid5v6oio-mikegaucis-projects.vercel.app",
   "environment": "preview",
-  "pages": 70,
-  "arabicPages": 34,
+  "pages": 72,
+  "arabicPages": 35,
   "currentDeskEnglishForms": [
     "live",
     "demo",
@@ -15,5 +15,10 @@
     "live",
     "demo",
     "partner"
-  ]
+  ],
+  "contactForms": [
+    "en",
+    "ar"
+  ],
+  "mailjetConfigured": false
 }

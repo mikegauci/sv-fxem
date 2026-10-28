@@ -1,26 +1,27 @@
 {
-  "pages": 70,
-  "arabicPages": 34,
+  "pages": 72,
+  "arabicPages": 35,
   "currentDeskForms": 6,
+  "contactForms": 2,
   "contentMatchesOriginal": true,
   "htmlLanguageAndDirectionMatchOriginal": true,
-  "localAssetReferences": 2393,
-  "localLinks": 4694,
+  "localAssetReferences": 2459,
+  "localLinks": 5146,
   "secretsAbsentFromPublicOutput": true,
-  "publicFilesScanned": 467,
-  "deferredPagesNotBuilt": true,
-  "mockedApiTests": 26,
-  "liveApiDictionaryKinds": [
-    "live",
-    "demo",
-    "partner"
-  ],
+  "publicFilesScanned": 472,
+  "mockedApiTests": 45,
   "realRegistrationSubmissionsTested": false,
+  "mailjetConfigured": false,
+  "realContactEmailsSent": false,
   "browserChecks": [
     "Arabic demo required-field validation",
     "Arabic demo forward/back navigation preserves selections",
     "Deployed Arabic live form: 18 dropdowns populated",
     "Deployed Arabic partner form: 18 dropdowns populated",
-    "Deployed Arabic demo form: 7 dropdowns populated"
+    "Deployed Arabic demo form: 7 dropdowns populated",
+    "English contact required-field and email validation",
+    "Arabic contact required-field validation",
+    "Missing Mailjet configuration reports unavailable without sending",
+    "English and Arabic form, map and heading geometry matches original after fonts load"
   ]
 }

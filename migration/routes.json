@@ -649,5 +649,19 @@
     "kind": "page",
     "language": "ar",
     "currentdesk": "partner"
+  },
+  {
+    "slug": "contact-us",
+    "url": "https://sv.fxem.com/contact-us/",
+    "kind": "page",
+    "language": "en",
+    "contact": true
+  },
+  {
+    "slug": "ar/contact-us",
+    "url": "https://sv.fxem.com/ar/contact-us/",
+    "kind": "page",
+    "language": "ar",
+    "contact": true
   }
 ]

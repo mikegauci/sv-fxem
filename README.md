@@ -1,16 +1,14 @@
 # FXEM — Astro design preview
 
-The English and Arabic content from `https://sv.fxem.com/` is reproduced in Astro. The preview contains 70 content routes: 36 English and 34 Arabic. Content is statically generated; the English and Arabic live-account, demo-account and partner forms use server-side Astro API endpoints on Vercel.
+The English and Arabic content from `https://sv.fxem.com/` is reproduced in Astro. The preview contains 72 content routes: 37 English and 35 Arabic. Content is statically generated; the English and Arabic live-account, demo-account and partner forms use server-side Astro API endpoints on Vercel.
 
 Original copy, page-specific styles, body classes, spacing, imagery, fonts, icons, menus, accordions, tabs, tables and third-party embeds are retained. No PHP or WordPress server is needed to build or serve the Astro pages.
 
 ## Scope
 
-The following remain on the existing site and are intentionally not migrated:
+The English and Arabic Contact Us pages are also migrated, with a server-side Mailjet handler. Email delivery is pending Mailjet configuration.
 
-- Contact Us in both languages.
-
-Navigation between migrated pages and both language switchers stays within the preview. Arabic pages retain the source `lang`, `dir`, RTL styles, menus, carousel settings and text. Existing source sections that are untranslated remain unchanged. Deferred pages in both languages, client/partner logins, platform downloads and external services keep their original destinations. Search uses the original search endpoint.
+Navigation between migrated pages and both language switchers stays within the preview. Arabic pages retain the source `lang`, `dir`, RTL styles, menus, carousel settings and text. Existing source sections that are untranslated remain unchanged. Client/partner logins, platform downloads and external services keep their original destinations. Search uses the original search endpoint.
 
 The Arabic CashU design is served at `/ar/deposit_request/`; a Vercel temporary redirect maps the original `/deposit_request/?lang=ar` request to that route. A small head script also supports this language-query URL on local/static servers. The English version remains at `/deposit_request/`.
 
@@ -50,6 +48,25 @@ The API requires same-origin JSON requests and a signed, form-specific token bou
 The preview uses the existing CurrentDesk service. A visitor's final Submit action can create a real CurrentDesk registration. Verification used live read-only dictionary calls and mocked registration requests; no real accounts or leads were created, and email delivery was not tested.
 
 Run `npm test` for the focused mock API/validation tests. Keep `.env` private; `.env.example` contains names only.
+
+## Contact forms / Mailjet
+
+Both `/contact-us/` and `/ar/contact-us/` preserve the original layout, contact details and four form fields. The original Arabic page's English placeholders and submit label are preserved. Validation and delivery status messages follow the page language. Name and email are required; subject and message remain optional as in the original.
+
+The server-only `/api/contact` endpoint calls [Mailjet Send API v3.1](https://dev.mailjet.com/docs/email-api/send-api-v31/send-basic-email) over HTTPS using Basic authentication. It sends one plain-text message to a fixed configured inbox, from a verified configured sender, with the visitor as ReplyTo. User input cannot change the recipient or sender. No auto-reply is sent.
+
+Required private server environment variables:
+
+- `CONTACT_FORM_SECRET`: independent random signing secret (configured locally and in Vercel Preview).
+- `MAILJET_API_KEY` and `MAILJET_SECRET_KEY`: the intended Mailjet account's API credentials.
+- `MAILJET_FROM_EMAIL`: a sender already verified and active in that Mailjet account.
+- `MAILJET_TO_EMAIL`: the FXEM inbox that should receive enquiries.
+
+The four Mailjet values are not yet configured. The preview displays the form and supports local validation, but reports that delivery is unavailable if a valid submission is attempted and makes no send requests until configuration is complete. Add these as encrypted Preview environment variables and redeploy to enable sending; never put them in frontend code or commit an .env file. Production and DNS are unchanged.
+
+The handler validates field types/lengths/email and header controls, enforces same-origin JSON, signed language-bound CSRF tokens and an HttpOnly SameSite cookie, rejects honeypot submissions, caps bodies, throttles sends, and deduplicates concurrent requests. Rate/deduplication state is per warm instance rather than distributed storage. No visitor details, message bodies or credentials are logged or stored in the browser. No automatic sending retries occur after uncertain failures. Mailjet errors and message identifiers are not exposed. Success requires a message-level success status and delivery ID, and is not reported for a sandbox response or missing configuration.
+
+The contact tests mock Mailjet requests, including success, failures, abuse controls and both languages. No actual enquiry email or Mailjet sandbox request has been sent; delivery remains unverified pending access.
 
 ## Source issues preserved
 

@@ -1,0 +1,38 @@
+---
+import head from '../content/head.html?raw';
+import bodyAttributes from '../content/body.json';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import scripts from '../content/scripts.html?raw';
+const styles = head.replace(/<title>[\s\S]*?<\/title>/g, '').replace(/<link[^>]*(?:hreflang|rel="canonical")[^>]*>/g, '').replace(/<meta[^>]*name="robots"[^>]*>/g, '');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <Fragment set:html={styles} />
+    <title>Page Not Found | FXEM</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body {...bodyAttributes}>
+    <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+    <div class="hfeed site" id="page">
+      <Header />
+      <main id="content" class="fxem-not-found">
+        <p class="code">404</p>
+        <h1>Page not found <span lang="ar" dir="rtl">الصفحة غير موجودة</span></h1>
+        <p>The page may have moved or the address may be incorrect.</p>
+        <p lang="ar" dir="rtl">ربما تم نقل الصفحة أو أن العنوان غير صحيح.</p>
+        <nav aria-label="Return to homepage"><a href="/">English homepage</a><a href="/ar/" lang="ar">الرئيسية بالعربية</a></nav>
+      </main>
+      <Footer />
+    </div>
+    <Fragment set:html={scripts} />
+  </body>
+</html>
+<style>
+  .fxem-not-found {text-align:center;padding:80px 24px;min-height:50vh;}
+  .code {color:#55b8c4;font-size:64px;font-weight:700;margin-bottom:12px;}
+  h1 span {display:block;margin-top:16px;}
+  nav {display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:30px;}
+  nav a {background:#55b8c4;color:white;border-radius:24px;padding:10px 24px;}
+</style>

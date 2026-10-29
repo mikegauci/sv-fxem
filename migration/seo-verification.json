@@ -1,0 +1,81 @@
+{
+  "preview": {
+    "environment": "preview",
+    "pages": 72,
+    "sitemapUrls": 62,
+    "localizedMetadata": true,
+    "reciprocalLanguageLinks": true,
+    "structuredData": true,
+    "singleMainH1": true,
+    "mainHeadingLevelsSequential": true,
+    "originalContentUnchanged": true,
+    "internalLinks": 5255,
+    "localAssetReferences": 2516,
+    "secretScanFiles": 474,
+    "secretsAbsent": true,
+    "largestHtmlGzipBytes": 36923,
+    "notFoundStatusConfigured": true
+  },
+  "productionPolicyLocalCheck": {
+    "environment": "production",
+    "pages": 72,
+    "sitemapUrls": 62,
+    "localizedMetadata": true,
+    "reciprocalLanguageLinks": true,
+    "structuredData": true,
+    "singleMainH1": true,
+    "mainHeadingLevelsSequential": true,
+    "originalContentUnchanged": true,
+    "internalLinks": 5255,
+    "localAssetReferences": 2516,
+    "secretScanFiles": 474,
+    "secretsAbsent": true,
+    "largestHtmlGzipBytes": 36903,
+    "notFoundStatusConfigured": true
+  },
+  "tests": 51,
+  "mobileWidthsTested": [
+    360,
+    390,
+    768
+  ],
+  "desktopHeadingStylesMatchOriginal": true,
+  "mobileHeadingStylesMatchOriginal": true,
+  "mobileOverflowFixes": [
+    "Arabic CurrentDesk and contact honeypots",
+    "Product tab containers",
+    "Calculator overlays"
+  ],
+  "liveChecks": [
+    "Preview authentication retained",
+    "Robots.txt blocks crawling",
+    "Sitemap has 62 URLs",
+    "WordPress p/page_id destinations",
+    "English/Arabic lang query redirects",
+    "Canonical trailing slash redirect",
+    "Branded missing-page rendering",
+    "Mobile menu toggles",
+    "Arabic localized metadata and real FXEM logo verified"
+  ],
+  "performance": {
+    "homepageHtmlGzipApproxKiB": 35,
+    "largestHtmlGzipApproxKiB": 37,
+    "homepageLocalCssGzipBytes": 111420,
+    "homepageLocalJsGzipBytes": 55461,
+    "homepageImagesLazy": 22,
+    "homepageImagesTotal": 23,
+    "fieldCoreWebVitalsMeasured": false,
+    "lighthouseRun": false,
+    "thirdPartyWidgetsRetained": true
+  },
+  "dependencyAudit": {
+    "packagesFlagged": 8,
+    "critical": 1,
+    "high": 6,
+    "low": 1,
+    "majorFrameworkUpgradeRequired": true
+  },
+  "productionChanged": false,
+  "homepageShortLinksNoLoop": true,
+  "wordpressShortLinkRedirects": 126
+}

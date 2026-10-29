@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
-    "build": "astro build",
+    "build": "astro build && node scripts/build-seo.mjs",
     "preview": "astro preview --host 0.0.0.0",
     "import:homepage": "node scripts/import-homepage.mjs",
     "import:site": "node scripts/import-site.mjs",
@@ -16,6 +16,7 @@
     "astro": "5.18.2"
   },
   "devDependencies": {
-    "cheerio": "1.1.2"
+    "cheerio": "1.1.2",
+    "postcss": "8.5.32"
   }
 }

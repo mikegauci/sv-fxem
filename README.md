@@ -96,6 +96,26 @@ The original visual assets and browser-side vendor scripts are in `public/assets
 - Dedicated Vercel project: `sv-fxem` under `mikegaucis-projects`.
 - Deploy with `npx vercel deploy --scope mikegaucis-projects --project sv-fxem --environment preview --yes`.
 - Do not promote to production, attach `sv.fxem.com`, or modify DNS during this phase.
-- Preview indexing is disabled through robots.txt, HTML robots metadata and X-Robots-Tag headers.
+- Preview/development builds block indexing through robots.txt, HTML robots metadata and X-Robots-Tag headers. Production-mode builds allow the 62 content URLs and keep utility pages and APIs out of search.
 - Vercel's existing deployment protection is retained; the preview may require Vercel sign-in.
 - The current preview deployment is recorded in `migration/preview.json`.
+
+## SEO and launch checks
+
+`npm run build` runs Astro and then `scripts/build-seo.mjs` against the final Vercel output. Source snapshots retain their original content; the deployed HTML receives the SEO layer. Local `npm run dev` serves the original preview metadata; use a completed build to inspect final SEO output.
+
+- `src/lib/seo/metadata.mjs` contains individually written English and Arabic titles/descriptions for all 72 content routes. Visible copy is unchanged.
+- Canonicals use `https://sv.fxem.com` and preserve existing permalink paths. Language alternatives are reciprocal and generated from the migrated inventory, with English as x-default. The two legacy Arabic category slugs are explicitly paired with their English equivalents.
+- `/sitemap.xml` lists 62 canonical content URLs with language alternatives. Six duplicate/empty author/category archives, two CashU utility forms and two registration confirmation pages are excluded and remain noindex on production.
+- JSON-LD includes Organization, WebSite, WebPage/ContactPage/AboutPage, BreadcrumbList on non-home pages, and Article on the six migrated article pages. Only source-backed identity, headlines, authors and valid featured images are used. Missing publication dates, ratings, broken media and unverified business claims are not invented. The original articles still contain placeholder copy; this phase does not rewrite it.
+- Open Graph and Twitter metadata use the localized page titles/descriptions and existing FXEM logo. No new marketing images are invented.
+- Each main content area has one H1. Repeated homepage slider titles and skipped heading levels use accessible heading roles with corrected levels. Build-generated CSS aliases preserve their original type styles at responsive breakpoints; a screen-reader-only primary heading supplies the homepage/utility H1.
+- The build opens indexing only when `VERCEL_ENV=production`. `NODE_ENV=production` alone is insufficient. Preview/development stays noindex with robots.txt blocking crawling and Vercel authentication retained. Generated Vercel output headers follow the same policy; there is no unconditional noindex header in vercel.json.
+- WordPress `p`/`page_id` short links, `index.php` and opposite-language `lang` query links redirect to existing canonical paths. Existing permalinks do not move. A branded bilingual error page is served with HTTP 404 and noindex for unmatched paths.
+- Images receive asynchronous decoding and offscreen image lazy loading. Calculator overlays and product tab widths are constrained on mobile, and offscreen honeypots are clipped inside the viewport to prevent RTL horizontal scrolling; desktop dimensions remain unchanged. Original external market widgets and LiveChat remain third-party performance dependencies.
+
+Run `node scripts/verify-seo.mjs` after a build for metadata/schema, heading, content-preservation, link/asset and secret checks. Run `VERCEL_ENV=production npm run build` followed by `VERCEL_ENV=production node scripts/verify-seo.mjs` to test production policy locally; this does not deploy. Restore a normal preview build before preview inspection. `npm test` covers both environment policies and SEO inventory alongside the form tests.
+
+A production launch still requires explicit authorization, domain/DNS cutover and post-launch Search Console sitemap/URL inspection checks. Protected previews cannot establish Google indexing or real-user Core Web Vitals. Real registration and email delivery tests remain separate from this SEO work.
+
+The dependency audit also reports 8 flagged packages (1 critical, 6 high, 1 low) in the existing Astro 5 / Vercel adapter 9 dependency tree. npm proposes major framework/adapter upgrades. These have not been applied as part of the SEO change; they need a separate upgrade and regression check before launch. See `migration/seo-qa.md` for the audit scope and limits.

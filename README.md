@@ -6,7 +6,7 @@ Original copy, page-specific styles, body classes, spacing, imagery, fonts, icon
 
 ## Scope
 
-The English and Arabic Contact Us pages are also migrated, with a server-side Mailjet handler. Email delivery is pending Mailjet configuration.
+The English and Arabic Contact Us pages are also migrated, with a server-side Mailjet handler. Mailjet credentials are configured for Preview; a non-delivering Mailjet sandbox validation has passed. Actual inbox delivery remains untested.
 
 Navigation between migrated pages and both language switchers stays within the preview. Arabic pages retain the source `lang`, `dir`, RTL styles, menus, carousel settings and text. Existing source sections that are untranslated remain unchanged. Client/partner logins, platform downloads and external services keep their original destinations. Search uses the original search endpoint.
 
@@ -62,11 +62,11 @@ Required private server environment variables:
 - `MAILJET_FROM_EMAIL`: a sender already verified and active in that Mailjet account.
 - `MAILJET_TO_EMAIL`: the FXEM inbox that should receive enquiries.
 
-The sender is configured as `website@fxem.com` and the recipient as `info@fxem.com` locally and in Vercel Preview. Mailjet API credentials are not yet configured; the sender still needs to be verified/active in the intended Mailjet account. The preview displays the form and supports local validation, but reports that delivery is unavailable if a valid submission is attempted and makes no send requests until configuration is complete. Add these as encrypted Preview environment variables and redeploy to enable sending; never put them in frontend code or commit an .env file. Production and DNS are unchanged.
+The sender is configured as `website@fxem.com` and the recipient as `info@fxem.com` locally and in Vercel Preview. Mailjet API credentials are stored locally and as encrypted Preview environment variables. Sandbox validation passed for these sender/recipient addresses. A visitor’s valid final submission now sends an enquiry through Mailjet. Never put credentials in frontend code or commit an .env file. Production and DNS are unchanged.
 
 The handler validates field types/lengths/email and header controls, enforces same-origin JSON, signed language-bound CSRF tokens and an HttpOnly SameSite cookie, rejects honeypot submissions, caps bodies, throttles sends, and deduplicates concurrent requests. Rate/deduplication state is per warm instance rather than distributed storage. No visitor details, message bodies or credentials are logged or stored in the browser. No automatic sending retries occur after uncertain failures. Mailjet errors and message identifiers are not exposed. Success requires a message-level success status and delivery ID, and is not reported for a sandbox response or missing configuration.
 
-The contact tests mock Mailjet requests, including success, failures, abuse controls and both languages. No actual enquiry email or Mailjet sandbox request has been sent; delivery remains unverified pending access.
+The contact tests mock Mailjet requests, including success, failures, abuse controls and both languages. A real Mailjet Send API sandbox request passed without delivery. No actual enquiry email has been sent during verification, so inbox delivery remains untested.
 
 ## Source issues preserved
 

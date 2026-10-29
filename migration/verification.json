@@ -11,7 +11,7 @@
   "publicFilesScanned": 472,
   "mockedApiTests": 45,
   "realRegistrationSubmissionsTested": false,
-  "mailjetConfigured": false,
+  "mailjetConfigured": true,
   "realContactEmailsSent": false,
   "browserChecks": [
     "Arabic demo required-field validation",
@@ -23,5 +23,11 @@
     "Arabic contact required-field validation",
     "Missing Mailjet configuration reports unavailable without sending",
     "English and Arabic form, map and heading geometry matches original after fonts load"
+  ],
+  "mailjetSandboxValidated": true,
+  "mailjetCredentialsAbsentFromPublicOutput": true,
+  "contactBootstrapLanguagesVerified": [
+    "en",
+    "ar"
   ]
 }

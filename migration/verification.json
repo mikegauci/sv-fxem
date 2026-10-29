@@ -9,7 +9,7 @@
   "localLinks": 5146,
   "secretsAbsentFromPublicOutput": true,
   "publicFilesScanned": 472,
-  "mockedApiTests": 54,
+  "mockedApiTests": 45,
   "realRegistrationSubmissionsTested": true,
   "mailjetConfigured": true,
   "realContactEmailsSent": false,
@@ -35,5 +35,6 @@
   ],
   "realDemoSubmissionAccepted": true,
   "liveAndPartnerRealSubmissionsTested": false,
-  "currentDeskEmailDeliveryVerified": false
+  "currentDeskEmailDeliveryVerified": false,
+  "automatedTests": 54
 }

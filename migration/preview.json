@@ -1,7 +1,7 @@
 {
   "projectId": "prj_p7KwRAZfQbOEJfi8QAGUabno1ZZK",
-  "deploymentId": "dpl_GVvuRZEfCtwXWsLhQLivuYzGsuDa",
-  "url": "https://sv-fxem-c8n6odoqq-mikegaucis-projects.vercel.app",
+  "deploymentId": "dpl_vgw1g3bNkg8t1ocSKmMwG27xRPaT",
+  "url": "https://sv-fxem-1l36h9f8c-mikegaucis-projects.vercel.app",
   "environment": "preview",
   "pages": 72,
   "arabicPages": 35,
@@ -25,5 +25,6 @@
   "contactRecipient": "info@fxem.com",
   "mailjetSandboxValidated": true,
   "seoEnabled": true,
-  "sitemapUrls": 62
+  "sitemapUrls": 62,
+  "realDemoTestAccepted": true
 }

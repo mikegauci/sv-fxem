@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-29",
+  "form": "demo",
+  "source": "Vercel Preview browser form",
+  "initialAttempt": "Blocked by strict origin validation before reaching CurrentDesk",
+  "fix": "Explicit exact-host allowlist for Astro reverse-proxy origin reconstruction",
+  "successfulUpstreamSubmissions": 1,
+  "confirmationPath": "/demo-account-created-successfully/",
+  "result": "CurrentDesk accepted the approved demo registration and the browser displayed the success page",
+  "emailDeliveryIndependentlyVerified": false,
+  "backOfficeRecordIndependentlyVerified": false,
+  "liveAndPartnerSubmitted": false,
+  "automatedTestsPassing": 54,
+  "productionWebsiteAndDnsChanged": false
+}

@@ -16,7 +16,7 @@ Comments and the CashU request form retain their visual design, but their submis
 
 The six English and Arabic registration forms are connected to CurrentDesk as described below. English live/demo success pages are included. The original Arabic forms use the same CurrentDesk scripts, field contract and success destinations as English. Arabic page layout/copy and the Arabic demo registration heading are preserved; untranslated original form labels remain in English. The importer checks both language schemas match before sharing validation rules.
 
-The original TradingView, Investing.com calculator and LiveChat embeds remain external services. No chat messages or account/payment submissions were sent during verification.
+The original TradingView, Investing.com calculator and LiveChat embeds remain external services. No chat messages or payment submissions were sent during verification. One explicitly approved real demo registration was subsequently accepted by CurrentDesk on 29 October 2026.
 
 ## CurrentDesk registration
 
@@ -45,7 +45,7 @@ Dropdowns come from CurrentDesk dictionaries through the server, returning only 
 
 The API requires same-origin JSON requests and a signed, form-specific token bound to an HttpOnly SameSite cookie. It also enforces a body-size limit, field allowlist, honeypot, submission throttle and duplicate-request handling. Throttle/deduplication state is held within each warm server instance; it is not a distributed queue. Ambiguous upstream failures are not automatically retried, and raw CurrentDesk records, credentials or success payloads are not returned to the browser.
 
-The preview uses the existing CurrentDesk service. A visitor's final Submit action can create a real CurrentDesk registration. Verification used live read-only dictionary calls and mocked registration requests; no real accounts or leads were created, and email delivery was not tested.
+The preview uses the existing CurrentDesk service. A visitor's final Submit action can create a real CurrentDesk registration. Verification includes live read-only dictionaries, mocked registration requests, and one explicitly approved real demo request accepted on 29 October 2026. The browser reached the demo confirmation page. Inbox delivery and the back-office record have not been independently checked; live and partner registrations remain unsubmitted. See `migration/currentdesk-real-test.json`.
 
 Run `npm test` for the focused mock API/validation tests. Keep `.env` private; `.env.example` contains names only.
 
@@ -119,3 +119,7 @@ Run `node scripts/verify-seo.mjs` after a build for metadata/schema, heading, co
 A production launch still requires explicit authorization, domain/DNS cutover and post-launch Search Console sitemap/URL inspection checks. Protected previews cannot establish Google indexing or real-user Core Web Vitals. Real registration and email delivery tests remain separate from this SEO work.
 
 The dependency audit also reports 8 flagged packages (1 critical, 6 high, 1 low) in the existing Astro 5 / Vercel adapter 9 dependency tree. npm proposes major framework/adapter upgrades. These have not been applied as part of the SEO change; they need a separate upgrade and regression check before launch. See `migration/seo-qa.md` for the audit scope and limits.
+
+## Reverse-proxy host validation
+
+The real demo test caught Astro reconstructing API request URLs as localhost when no allowed host patterns were configured, which correctly triggered the custom same-origin rejection before CurrentDesk was called. `security.allowedDomains` now uses an exact hostname allowlist: the original site, the project domain and Vercel-provided deployment/branch aliases. Local HTTP hosts are trusted only outside Vercel. There is no wildcard trust for arbitrary Vercel tenants and neither origin nor CSRF validation has been disabled. NodeApp regression tests reproduce the proxy URL behavior and reject unapproved forwarded hosts.

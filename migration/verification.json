@@ -9,8 +9,8 @@
   "localLinks": 5146,
   "secretsAbsentFromPublicOutput": true,
   "publicFilesScanned": 472,
-  "mockedApiTests": 45,
-  "realRegistrationSubmissionsTested": false,
+  "mockedApiTests": 54,
+  "realRegistrationSubmissionsTested": true,
   "mailjetConfigured": true,
   "realContactEmailsSent": false,
   "browserChecks": [
@@ -29,5 +29,11 @@
   "contactBootstrapLanguagesVerified": [
     "en",
     "ar"
-  ]
+  ],
+  "realRegistrationFormsTested": [
+    "demo"
+  ],
+  "realDemoSubmissionAccepted": true,
+  "liveAndPartnerRealSubmissionsTested": false,
+  "currentDeskEmailDeliveryVerified": false
 }

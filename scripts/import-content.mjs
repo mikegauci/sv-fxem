@@ -148,9 +148,14 @@ function splitContent(content) {
   const cuts = [innerStart, ...starts.filter(s => s > innerStart), innerEnd];
   const sections = [];
   for (let i = 0; i < cuts.length - 1; i++) sections.push({ html: content.slice(cuts[i], cuts[i + 1]) });
-  // Attach whitespace-only pieces to the previous section.
+  // Attach whitespace-only pieces to the previous section (leading ones to the next).
   const merged = [];
-  for (const s of sections) { if (merged.length && !s.html.trim()) merged.at(-1).html += s.html; else merged.push(s); }
+  let lead = '';
+  for (const s of sections) {
+    if (!s.html.trim()) { if (merged.length) merged.at(-1).html += s.html; else lead += s.html; }
+    else { merged.push({ html: lead + s.html }); lead = ''; }
+  }
+  if (lead) merged.length ? (merged.at(-1).html += lead) : merged.push({ html: lead });
   return { shell: content.slice(0, innerStart) + '<!--fxem:sections-->' + content.slice(innerEnd), sections: merged };
 }
 

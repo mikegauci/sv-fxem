@@ -513,6 +513,10 @@ export type Database = {
         Args: { target_user: string };
         Returns: undefined;
       };
+      admin_save_page: {
+        Args: { fields: Json; new_sections: Json; target_page: string | null };
+        Returns: string;
+      };
       admin_save_user_profile: {
         Args: {
           capabilities: string[] | null;

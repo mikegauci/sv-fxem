@@ -1,13 +1,8 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { hasAdminCapability } from "@/lib/admin/capabilities";
-import {
-  buildIframeEmbed,
-  normalizeRichEmbeds,
-  withoutEmbeds,
-  scriptChanged,
-  scriptGuardMessage,
-} from "@/lib/admin/embeds.mjs";
+import { withoutEmbeds } from "@/lib/admin/embeds.mjs";
+import { prepareSections } from "@/lib/admin/page-sections";
 import { assertAdmin } from "@/lib/auth/admin";
 import { cleanPagePath } from "@/lib/admin/page-paths.mjs";
 import { revalidateContent } from "@/lib/site/revalidate";
@@ -60,13 +55,6 @@ export async function savePage(input: PageInput): Promise<Result> {
   const cleaned = cleanPagePath(input.path, input.language);
   if ("error" in cleaned) return { error: cleaned.error! };
   const path = cleaned.path!;
-  if (
-    input.sections.some((s) => !["html", "rich_text", "embed"].includes(s.kind))
-  )
-    return { error: "Unknown section type." };
-  if (input.sections.some((s) => s.html.length > 500_000))
-    return { error: "A section is too large." };
-
   const db = await createClient();
   const previous = input.id
     ? await db
@@ -84,49 +72,13 @@ export async function savePage(input: PageInput): Promise<Result> {
   )
     return { error: "The homepage URL cannot change." };
 
-  const sections = [];
-  const ids = new Set<string>();
-  for (const section of input.sections) {
-    if (
-      section.id &&
-      (ids.has(section.id) ||
-        !previous?.data.page_sections.some((s) => s.id === section.id))
-    )
-      return { error: "Invalid section id. Reload and try again." };
-    if (section.id) ids.add(section.id);
-    let html = section.html;
-    try {
-      if (section.kind === "rich_text") html = normalizeRichEmbeds(html);
-    } catch (e) {
-      return { error: (e as Error).message };
-    }
-    const options = section.options as Record<string, unknown> | null;
-    if (section.kind === "embed") {
-      if (options?.mode === "iframe") {
-        try {
-          html = buildIframeEmbed(options);
-        } catch (e) {
-          return { error: (e as Error).message };
-        }
-      } else if (options?.mode !== "code")
-        return { error: "Choose an embed mode." };
-      if (new TextEncoder().encode(html).length > 100_000)
-        return { error: "Embed HTML is limited to 100 KB." };
-      if (
-        !fullAdmin &&
-        options?.mode === "code" &&
-        (!section.id ||
-          !previous?.data.page_sections.some(
-            (s) => s.id === section.id && s.html === html,
-          ))
-      )
-        return { error: scriptGuardMessage(section.label) };
-    }
-    const old = previous?.data.page_sections.find((s) => s.id === section.id);
-    if (!fullAdmin && scriptChanged(old?.html ?? "", html))
-      return { error: scriptGuardMessage(section.label) };
-    sections.push({ ...section, html });
-  }
+  const prepared = prepareSections(
+    input.sections,
+    previous?.data.page_sections ?? null,
+    fullAdmin,
+  );
+  if ("error" in prepared) return prepared;
+  const { sections } = prepared;
   if (
     input.customCode &&
     ((typeof input.customCode.head !== "string" &&

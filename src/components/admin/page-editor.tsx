@@ -418,6 +418,24 @@ export function PageEditor({
               {message}
             </p>
           )}
+          <form
+            method="post"
+            action="/admin/pages/preview/"
+            target="_blank"
+            onSubmit={(e) => {
+              const draft = e.currentTarget.elements.namedItem("draft");
+              (draft as HTMLInputElement).value = JSON.stringify(page);
+            }}
+          >
+            <input type="hidden" name="draft" />
+            <button type="submit" className="border-brand text-brand hover:bg-brand/5 w-full rounded-lg border px-5 py-2.5 text-base leading-none font-semibold">
+              Preview changes
+            </button>
+            <p className="mt-1 text-xs text-black/60">
+              Shows your unsaved edits without publishing them. The preview
+              runs the page’s scripts.
+            </p>
+          </form>
           <div className="flex flex-wrap gap-3">
             {page.id && (
               <a
@@ -426,7 +444,7 @@ export function PageEditor({
                 rel="noreferrer"
                 className="underline"
               >
-                Preview saved version — this preview runs the page’s scripts
+                Preview saved version
               </a>
             )}
             {publicPath && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { InlineRichText } from "./inline-rich-text";
 import { EmbedForm, type EmbedSettings } from "./embed-form";
 import { scriptSignature } from "@/lib/admin/embeds.mjs";
@@ -230,6 +230,14 @@ export function SectionEditor({
   onChange: (section: SectionInput) => void;
 }) {
   const [mode, setMode] = useState<"content" | "html">("content");
+  // Sections with nothing to edit as fields open straight in HTML.
+  const editable = useMemo(
+    () =>
+      section.kind === "html" &&
+      typeof document !== "undefined" &&
+      collectFields(parseSection(document, section.html).content).length > 0,
+    [section.kind, section.html],
+  );
   if (section.kind === "embed")
     return (
       <EmbedForm
@@ -262,19 +270,21 @@ export function SectionEditor({
           Contains a script — only full admins can change it
         </p>
       )}
-      <div className="mb-3 flex gap-1 text-sm">
-        {(["content", "html"] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setMode(m)}
-            className={`rounded px-3 py-1 ${mode === m ? "bg-ink text-white" : "bg-black/5"}`}
-          >
-            {m === "content" ? "Content" : "HTML"}
-          </button>
-        ))}
-      </div>
-      {mode === "content" ? (
+      {editable && (
+        <div className="mb-3 flex gap-1 text-sm">
+          {(["content", "html"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              className={`rounded px-3 py-1 ${mode === m ? "bg-ink text-white" : "bg-black/5"}`}
+            >
+              {m === "content" ? "Content" : "HTML"}
+            </button>
+          ))}
+        </div>
+      )}
+      {editable && mode === "content" ? (
         <ContentFields
           html={section.html}
           dir={dir}

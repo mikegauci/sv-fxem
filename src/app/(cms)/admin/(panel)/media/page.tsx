@@ -5,6 +5,9 @@ import { MediaUploader } from "@/components/admin/media-uploader";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { createClient } from "@/lib/supabase/server";
 
+// Reads the session on every request, so skip instant-navigation validation.
+export const instant = false;
+
 export const metadata: Metadata = { title: "Media" };
 
 const PAGE_SIZE = 48;

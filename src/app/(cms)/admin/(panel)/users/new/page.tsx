@@ -2,6 +2,9 @@ import { AdminPageHeader } from "@/components/admin/page-header";
 import { UserEditor } from "@/components/admin/user-editor";
 import { requireAdminPage } from "@/lib/auth/admin";
 import { saveUser, deleteUser } from "../actions";
+
+// Reads the session on every request, so skip instant-navigation validation.
+export const instant = false;
 export const metadata = { title: "Add user" };
 export default async function NewUserPage() {
   const me = await requireAdminPage();

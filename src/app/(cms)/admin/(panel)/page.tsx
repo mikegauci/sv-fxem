@@ -2,6 +2,9 @@ import Link from "next/link";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { createClient } from "@/lib/supabase/server";
 
+// Reads the session on every request, so skip instant-navigation validation.
+export const instant = false;
+
 export const metadata = { title: "Dashboard" };
 
 const languages = { en: "English", ar: "Arabic" } as const;

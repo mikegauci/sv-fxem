@@ -89,6 +89,8 @@ pnpm typecheck
 pnpm lint
 ```
 
+Content import (CMS stage 2): `node --env-file=.env.local scripts/import-content.mjs` checks that every page's content, header and footer can be rebuilt from the extracted rows; `--apply` writes them to Supabase (pages + sections, categories, menus + items, footer widgets, the per-language header/footer templates in `settings` as `chrome:en`/`chrome:ar`, and 71 original images in the `media` bucket under `assets/`). It replaces imported content wholesale, so only re-run it before content is edited in the CMS. `node --env-file=.env.local scripts/verify-import.mjs` reads everything back with the public key and rebuilds all 72 pages. Renderers for menus, header, footer and sections are in `src/lib/site/menus.mjs` and `chrome.mjs`.
+
 `scripts/prebuild.mjs` runs before `dev` and `build`: it bundles the browser form scripts into `public/_fxem/` and writes `src/generated/routing.json` for the proxy.
 
 - Public pages: `src/app/[[...path]]/route.ts` renders each page snapshot (`src/lib/site/`), applies the SEO layer (`src/lib/seo/document.mjs`) and caches the result (`"use cache"`, tag `pages`). Unknown paths get the bilingual 404 with HTTP 404. Search is `src/app/search` and `src/app/ar/search`.

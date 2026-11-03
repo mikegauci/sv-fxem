@@ -1,4 +1,5 @@
 import "server-only";
+import { insertPageCode } from "@/lib/admin/embeds.mjs";
 import { cacheLife, cacheTag } from "next/cache";
 import { seoDocument } from "@/lib/seo/document.mjs";
 import { pathOf } from "@/lib/seo/site.mjs";
@@ -116,14 +117,23 @@ export async function renderPage(slug: string): Promise<Rendered> {
     composed.page,
     composed.routes,
   );
-  return { status: 200, html };
+  return {
+    status: 200,
+    html: insertPageCode(
+      html,
+      composed.page.custom_code as { head?: string; bodyEnd?: string },
+    ),
+  };
 }
 
 // Admin preview of a saved page (drafts included); never cached.
 export async function renderPreview(page: PageContent): Promise<string> {
   const routes = (await siteRoutes()).filter((r) => r.id !== page.id);
   const composed = await composeFrom(page, [...routes, page]);
-  return seoDocument(renderSnapshot(composed.snapshot), page, composed.routes);
+  return insertPageCode(
+    await seoDocument(renderSnapshot(composed.snapshot), page, composed.routes),
+    page.custom_code as { head?: string; bodyEnd?: string },
+  );
 }
 
 export async function renderNotFound(): Promise<Rendered> {

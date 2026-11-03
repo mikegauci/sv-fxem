@@ -1,3 +1,5 @@
+import { requireAdminPage } from "@/lib/auth/admin";
+import { hasAdminCapability } from "@/lib/admin/capabilities";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { PageEditor } from "@/components/admin/page-editor";
 
@@ -9,6 +11,7 @@ export const instant = false;
 export default async function NewPage({
   searchParams,
 }: PageProps<"/admin/pages/new">) {
+  const user = await requireAdminPage("pages");
   const { lang } = await searchParams;
   const language = lang === "ar" ? "ar" : "en";
   return (
@@ -18,6 +21,7 @@ export default async function NewPage({
         description="New pages use the site's standard page layout. Add text sections and save as a draft to preview."
       />
       <PageEditor
+        fullAdmin={hasAdminCapability(user)}
         initial={{
           id: null,
           language,

@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { InlineRichText } from "./inline-rich-text";
+import { EmbedForm, type EmbedSettings } from "./embed-form";
+import { scriptSignature } from "@/lib/admin/embeds.mjs";
+import { collectFields, parseSection } from "@/lib/admin/content-fields.mjs";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { mediaUrl } from "@/lib/media";
@@ -13,65 +17,23 @@ const field =
 // and background images. Each field points at a node of a parsed copy of the
 // section, so editing changes only that node and the layout stays intact.
 type Field =
+  | { kind: "inline"; node: HTMLElement; label: string }
   | { kind: "text"; node: Text; label: string }
   | { kind: "link"; node: HTMLAnchorElement; label: string }
   | { kind: "image"; node: HTMLImageElement; label: string }
   | { kind: "background"; node: HTMLElement; label: string };
 
-const SKIP = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "SVG", "svg", "IFRAME"]);
-
-function textLabel(node: Text) {
-  const parent = node.parentElement;
-  const heading = parent?.closest("h1,h2,h3,h4,h5,h6");
-  if (heading) return "Heading";
-  if (parent?.closest("a.wp-block-button__link, .uagb-button__link, button"))
-    return "Button text";
-  if (parent?.closest("a")) return "Link text";
-  if (parent?.closest("li")) return "List item";
-  if (parent?.closest("th,td")) return "Table cell";
-  if (parent?.closest("p")) return "Paragraph";
-  return "Text";
-}
-
-function collectFields(root: DocumentFragment): Field[] {
-  const fields: Field[] = [];
-  const walk = (node: Node) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (node.nodeValue?.trim())
-        fields.push({
-          kind: "text",
-          node: node as Text,
-          label: textLabel(node as Text),
-        });
-      return;
-    }
-    if (node.nodeType !== Node.ELEMENT_NODE) return;
-    const el = node as HTMLElement;
-    if (SKIP.has(el.tagName)) return;
-    if (el.tagName === "IMG")
-      fields.push({
-        kind: "image",
-        node: el as HTMLImageElement,
-        label: "Image",
-      });
-    if (/url\(/.test(el.getAttribute("style") || ""))
-      fields.push({ kind: "background", node: el, label: "Background image" });
-    if (el.tagName === "A" && el.hasAttribute("href"))
-      fields.push({
-        kind: "link",
-        node: el as HTMLAnchorElement,
-        label: "Link URL",
-      });
-    el.childNodes.forEach(walk);
-  };
-  root.childNodes.forEach(walk);
-  return fields;
-}
-
-function parse(html: string) {
-  const template = document.createElement("template");
-  template.innerHTML = html;
-  return template;
+// DOM paths keep a block editor mounted when links are inserted inside it.
+function fieldKey(field: Field) {
+  const path: number[] = [];
+  let node: Node = field.node;
+  while (node.parentNode) {
+    path.unshift(
+      Array.prototype.indexOf.call(node.parentNode.childNodes, node),
+    );
+    node = node.parentNode;
+  }
+  return `${field.kind}:${path.join(".")}`;
 }
 
 const backgroundUrl = (el: HTMLElement) =>
@@ -101,12 +63,14 @@ function ContentFields({
     latest.current = html;
     // Parsing needs the DOM, so it runs after mount.
 
-    setParsed((p) => ({ template: parse(html), version: p.version + 1 }));
+    setParsed((p) => ({
+      template: parseSection(document, html),
+      version: p.version + 1,
+    }));
   }, [html]);
-  const fields = useMemo(
-    () => (template ? collectFields(template.content) : []),
-    [template],
-  );
+  // Inline edits replace descendants. Recollect so URL fields point at the
+  // current anchors rather than detached nodes from the previous innerHTML.
+  const fields = template ? (collectFields(template.content) as Field[]) : [];
   if (!template) return null;
   const commit = () => {
     latest.current = template.innerHTML;
@@ -122,7 +86,22 @@ function ContentFields({
 
   return (
     <div className="space-y-3" key={version}>
-      {fields.map((f, i) => {
+      {fields.map((f) => {
+        const key = fieldKey(f);
+        if (f.kind === "inline")
+          return (
+            <div key={key} className="text-xs font-semibold">
+              {f.label}
+              <InlineRichText
+                value={f.node.innerHTML}
+                dir={dir}
+                onChange={(html) => {
+                  f.node.innerHTML = html;
+                  commit();
+                }}
+              />
+            </div>
+          );
         if (f.kind === "text") {
           const value = f.node.nodeValue ?? "";
           const lead = value.match(/^\s*/)![0];
@@ -130,7 +109,7 @@ function ContentFields({
           const inner = value.trim();
           const Input = inner.length > 80 ? "textarea" : "input";
           return (
-            <label key={i} className="block text-xs font-semibold">
+            <label key={key} className="block text-xs font-semibold">
               {f.label}
               <Input
                 dir={dir}
@@ -151,7 +130,7 @@ function ContentFields({
         }
         if (f.kind === "link")
           return (
-            <label key={i} className="block text-xs font-semibold">
+            <label key={key} className="block text-xs font-semibold">
               {f.label}
               <span className="text-muted ml-2 font-normal">
                 “{f.node.textContent?.trim().slice(0, 40) || "link"}”
@@ -159,7 +138,7 @@ function ContentFields({
               <input
                 dir="ltr"
                 className={field}
-                defaultValue={f.node.getAttribute("href") ?? ""}
+                value={f.node.getAttribute("href") ?? ""}
                 onChange={(e) => {
                   f.node.setAttribute("href", e.target.value.trim());
                   commit();
@@ -173,7 +152,7 @@ function ContentFields({
             : backgroundUrl(f.node);
         return (
           <div
-            key={i}
+            key={key}
             className="flex items-start gap-3 rounded border border-black/10 p-2"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -241,18 +220,44 @@ function ContentFields({
 
 export function SectionEditor({
   section,
+  fullAdmin = false,
   dir,
   onChange,
 }: {
   section: SectionInput;
+  fullAdmin?: boolean;
   dir: "ltr" | "rtl";
   onChange: (section: SectionInput) => void;
 }) {
   const [mode, setMode] = useState<"content" | "html">("content");
+  // Sections with nothing to edit as fields open straight in HTML.
+  const editable = useMemo(
+    () =>
+      section.kind === "html" &&
+      typeof document !== "undefined" &&
+      collectFields(parseSection(document, section.html).content).length > 0,
+    [section.kind, section.html],
+  );
+  if (section.kind === "embed")
+    return (
+      <EmbedForm
+        initial={section.options as EmbedSettings | undefined}
+        code={section.html}
+        fullAdmin={fullAdmin}
+        onSave={(html, options) => onChange({ ...section, html, options })}
+      />
+    );
   if (section.kind === "rich_text")
     return (
       <div dir={dir}>
+        {!fullAdmin && scriptSignature(section.html).length > 0 && (
+          <p className="mb-3 text-sm">
+            Contains a script — only full admins can change it
+          </p>
+        )}
         <RichTextEditor
+          fullAdmin={fullAdmin}
+          dir={dir}
           value={section.html}
           onChange={(html) => onChange({ ...section, html })}
         />
@@ -260,19 +265,26 @@ export function SectionEditor({
     );
   return (
     <div>
-      <div className="mb-3 flex gap-1 text-sm">
-        {(["content", "html"] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setMode(m)}
-            className={`rounded px-3 py-1 ${mode === m ? "bg-ink text-white" : "bg-black/5"}`}
-          >
-            {m === "content" ? "Content" : "HTML"}
-          </button>
-        ))}
-      </div>
-      {mode === "content" ? (
+      {!fullAdmin && scriptSignature(section.html).length > 0 && (
+        <p className="mb-3 text-sm">
+          Contains a script — only full admins can change it
+        </p>
+      )}
+      {editable && (
+        <div className="mb-3 flex gap-1 text-sm">
+          {(["content", "html"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              className={`rounded px-3 py-1 ${mode === m ? "bg-ink text-white" : "bg-black/5"}`}
+            >
+              {m === "content" ? "Content" : "HTML"}
+            </button>
+          ))}
+        </div>
+      )}
+      {editable && mode === "content" ? (
         <ContentFields
           html={section.html}
           dir={dir}

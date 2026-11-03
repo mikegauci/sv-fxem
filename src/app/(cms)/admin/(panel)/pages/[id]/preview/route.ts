@@ -17,17 +17,18 @@ export async function GET(
   const { data, error } = await db
     .from("pages")
     .select(
-      "id, path, kind, language, translation_id, wp_id, title, seo, layout, page_sections(position, kind, html)",
+      "id, path, kind, language, translation_id, wp_id, title, seo, layout, custom_code, page_sections(position, kind, html)",
     )
     .eq("id", id)
     .maybeSingle();
   if (error || !data) return new Response("Page not found", { status: 404 });
-  const { path, seo, layout, page_sections, ...row } = data;
+  const { path, seo, layout, custom_code, page_sections, ...row } = data;
   const page: PageContent = {
     ...row,
     slug: path,
     seo: (seo ?? {}) as PageContent["seo"],
     layout: layout as unknown as PageLayout,
+    custom_code,
     sections: page_sections,
   };
   return new Response(await renderPreview(page), {

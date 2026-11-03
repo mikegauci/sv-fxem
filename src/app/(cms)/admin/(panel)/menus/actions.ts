@@ -1,5 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { hasAdminCapability } from "@/lib/admin/capabilities";
+import { scriptChanged, scriptGuardMessage } from "@/lib/admin/embeds.mjs";
 import { assertAdmin } from "@/lib/auth/admin";
 import { checkItem, syncMobile } from "@/lib/admin/menu-items.mjs";
 import { feedSettings, fetchNews } from "@/lib/footer/news.mjs";
@@ -31,7 +33,7 @@ export async function saveMenu(
   menuId: string,
   input: MenuItemInput[],
 ): Promise<{ error: string } | void> {
-  await assertAdmin("menus");
+  const user = await assertAdmin("menus");
   const db = await createClient();
   const menu = await db
     .from("menus")
@@ -39,6 +41,21 @@ export async function saveMenu(
     .eq("id", menuId)
     .single();
   if (menu.error) return { error: menu.error.message };
+  if (!hasAdminCapability(user)) {
+    const previous = await db
+      .from("menu_items")
+      .select("id, options")
+      .eq("menu_id", menuId);
+    if (previous.error) return { error: previous.error.message };
+    for (const item of input) {
+      const old = previous.data.find((row) => row.id === item.id)?.options as
+        Record<string, unknown> | undefined;
+      if (
+        scriptChanged(String(old?.html ?? ""), String(item.options?.html ?? ""))
+      )
+        return { error: scriptGuardMessage(item.label) };
+    }
+  }
   const ids = new Set(input.map((i) => i.id));
   for (const item of input) {
     if (!KINDS.includes(item.options?.kind))
@@ -83,7 +100,7 @@ export async function saveFooter(
   language: "en" | "ar",
   input: FooterWidgetInput[],
 ): Promise<{ error: string } | void> {
-  await assertAdmin("menus");
+  const user = await assertAdmin("menus");
   if (!["en", "ar"].includes(language)) return { error: "Unknown language." };
   const counts = new Map<string, number>();
   for (const w of input)
@@ -110,6 +127,21 @@ export async function saveFooter(
       return { error: "A footer block is too large." };
   }
   const db = await createClient();
+  if (!hasAdminCapability(user)) {
+    const previous = await db
+      .from("footer_widgets")
+      .select("id, html")
+      .eq("language", language);
+    if (previous.error) return { error: previous.error.message };
+    for (const widget of widgets)
+      if (
+        scriptChanged(
+          previous.data.find((row) => row.id === widget.id)?.html ?? "",
+          widget.html,
+        )
+      )
+        return { error: scriptGuardMessage(widget.title) };
+  }
   const { error } = await db.rpc("admin_save_footer", {
     target_language: language,
     new_widgets: widgets as unknown as Json,
@@ -132,7 +164,9 @@ export async function checkFeed(
   } catch (e) {
     return {
       error:
-        e instanceof Error && !e.name.includes("Abort") && !/fetch failed/.test(e.message)
+        e instanceof Error &&
+        !e.name.includes("Abort") &&
+        !/fetch failed/.test(e.message)
           ? e.message
           : "Could not read that feed.",
     };

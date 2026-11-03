@@ -1,8 +1,8 @@
 import { sitemap } from "@/lib/seo/site.mjs";
-import { routes } from "@/lib/site/snapshots.mjs";
+import { siteRoutes } from "@/lib/site/content";
 
-export function GET() {
-  return new Response(sitemap(routes()), {
+export async function GET() {
+  return new Response(sitemap(await siteRoutes()), {
     headers: { "Content-Type": "application/xml; charset=utf-8" },
   });
 }

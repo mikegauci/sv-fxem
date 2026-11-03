@@ -1,5 +1,7 @@
 "use client";
 
+import { convertToRichText } from "./rich-text-schema";
+import { scriptSignature, scriptGuardMessage } from "@/lib/admin/embeds.mjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -21,14 +23,26 @@ export type Translation = { id: string; title: string } | null;
 
 export function PageEditor({
   initial,
+  fullAdmin = false,
   translation,
   publicPath,
 }: {
   initial: PageInput;
+  fullAdmin?: boolean;
   translation: Translation;
   publicPath: string | null;
 }) {
-  const [page, setPage] = useState(initial);
+  const withEditorKeys = (draft: PageInput) => ({
+    ...draft,
+    sections: draft.sections.map((section) => ({
+      ...section,
+      editorKey: section.editorKey ?? crypto.randomUUID(),
+    })),
+  });
+  const [page, setPage] = useState<PageInput>(() => withEditorKeys(initial));
+  const [conversions, setConversions] = useState<
+    Map<SectionInput, SectionInput>
+  >(new Map());
   const [open, setOpen] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
@@ -46,14 +60,28 @@ export function PageEditor({
     const [s] = next.splice(i, 1);
     next.splice(i + by, 0, s);
     setSections(next);
-    if (open === i) setOpen(i + by);
+    const opened = open === null ? null : page.sections[open];
+    setOpen(opened ? next.indexOf(opened) : null);
   };
   const add = (kind: SectionInput["kind"], at = page.sections.length) => {
     const next = [...page.sections];
     next.splice(at, 0, {
       id: null,
+      editorKey: crypto.randomUUID(),
       kind,
-      label: kind === "rich_text" ? "Text" : "HTML",
+      label:
+        kind === "rich_text" ? "Text" : kind === "embed" ? "Embed" : "HTML",
+      ...(kind === "embed"
+        ? {
+            options: {
+              mode: "iframe",
+              src: "",
+              title: "",
+              height: 450,
+              allowFullscreen: true,
+            },
+          }
+        : {}),
       html: kind === "rich_text" ? "<p></p>" : "",
     });
     setSections(next);
@@ -80,6 +108,7 @@ export function PageEditor({
       () => savePage(page),
       (id) => {
         setMessage("Saved.");
+        setConversions(new Map());
         try {
           localStorage.removeItem(draftKey);
         } catch {}
@@ -95,7 +124,7 @@ export function PageEditor({
         <LocalDraft
           draftKey={draftKey}
           value={page}
-          onRestore={(draft) => setPage(draft)}
+          onRestore={(draft) => setPage(withEditorKeys(draft))}
         />
         <label className="block rounded-lg bg-white p-5 text-sm font-semibold">
           Title
@@ -120,6 +149,13 @@ export function PageEditor({
             <button
               type="button"
               className="rounded bg-white px-3 py-1.5"
+              onClick={() => add("embed")}
+            >
+              + Embed
+            </button>
+            <button
+              type="button"
+              className="rounded bg-white px-3 py-1.5"
               onClick={() => add("html")}
             >
               + HTML section
@@ -133,7 +169,10 @@ export function PageEditor({
         )}
         <ol className="space-y-3">
           {page.sections.map((section, i) => (
-            <li key={section.id ?? `new-${i}`} className="rounded-lg bg-white">
+            <li
+              key={section.id ?? section.editorKey ?? `new-${i}`}
+              className="rounded-lg bg-white"
+            >
               <div className="flex flex-wrap items-center gap-2 p-3">
                 <span className="text-muted w-6 text-xs">{i + 1}</span>
                 <button
@@ -146,7 +185,11 @@ export function PageEditor({
                   {section.label || "Section"}
                 </button>
                 <span className="rounded bg-black/5 px-2 py-0.5 text-xs">
-                  {section.kind === "rich_text" ? "Text" : "Layout"}
+                  {section.kind === "rich_text"
+                    ? "Text"
+                    : section.kind === "embed"
+                      ? "Embed"
+                      : "Layout"}
                 </span>
                 <button
                   type="button"
@@ -166,6 +209,50 @@ export function PageEditor({
                 >
                   ↓
                 </button>
+                {section.kind === "html" && (
+                  <button
+                    type="button"
+                    className="text-xs underline"
+                    onClick={() => {
+                      if (!fullAdmin && scriptSignature(section.html).length) {
+                        setMessage(scriptGuardMessage(section.label));
+                        return;
+                      }
+                      if (
+                        !confirm(
+                          "The section's text, headings, lists, links and images are kept; its design (columns, backgrounds, buttons styling) is replaced by plain formatted text. You can undo this until you save.",
+                        )
+                      )
+                        return;
+                      const converted: SectionInput = {
+                        ...section,
+                        kind: "rich_text",
+                        html: convertToRichText(section.html, fullAdmin),
+                      };
+                      setConversions((previous) =>
+                        new Map(previous).set(converted, section),
+                      );
+                      const next = [...page.sections];
+                      next[i] = converted;
+                      setSections(next);
+                    }}
+                  >
+                    Convert to rich text
+                  </button>
+                )}
+                {conversions.has(section) && (
+                  <button
+                    type="button"
+                    className="text-xs underline"
+                    onClick={() => {
+                      const next = [...page.sections];
+                      next[i] = conversions.get(section)!;
+                      setSections(next);
+                    }}
+                  >
+                    Undo convert
+                  </button>
+                )}
                 <button
                   type="button"
                   className="text-xs underline"
@@ -174,6 +261,7 @@ export function PageEditor({
                     next.splice(i + 1, 0, {
                       ...section,
                       id: null,
+                      editorKey: crypto.randomUUID(),
                       label: `${section.label} (copy)`,
                     });
                     setSections(next);
@@ -208,14 +296,23 @@ export function PageEditor({
                       onChange={(e) => {
                         const next = [...page.sections];
                         next[i] = { ...section, label: e.target.value };
+                        if (conversions.has(section))
+                          setConversions((old) =>
+                            new Map(old).set(next[i], old.get(section)!),
+                          );
                         setSections(next);
                       }}
                     />
                   </label>
                   <SectionEditor
                     section={section}
+                    fullAdmin={fullAdmin}
                     dir={dir}
                     onChange={(s) => {
+                      if (conversions.has(section))
+                        setConversions((old) =>
+                          new Map(old).set(s, old.get(section)!),
+                        );
                       setPage((p) => {
                         const next = [...p.sections];
                         next[i] = s;
@@ -329,7 +426,7 @@ export function PageEditor({
                 rel="noreferrer"
                 className="underline"
               >
-                Preview saved version
+                Preview saved version — this preview runs the page’s scripts
               </a>
             )}
             {publicPath && (
@@ -388,6 +485,37 @@ export function PageEditor({
             Hide from search engines
           </label>
         </div>
+
+        {fullAdmin && (
+          <div className="space-y-3 rounded-lg bg-white p-5 text-sm">
+            <p className="font-semibold">Custom code</p>
+            <p className="text-muted text-xs">
+              Runs on this page only, in this language.
+            </p>
+            {(
+              [
+                ["head", "In <head>"],
+                ["bodyEnd", "Before </body>"],
+              ] as const
+            ).map(([key, label]) => (
+              <label key={key} className="block">
+                {label}
+                <textarea
+                  dir="ltr"
+                  spellCheck={false}
+                  rows={7}
+                  className={`${field} font-mono text-xs`}
+                  value={page.customCode?.[key] ?? ""}
+                  onChange={(e) =>
+                    update({
+                      customCode: { ...page.customCode, [key]: e.target.value },
+                    })
+                  }
+                />
+              </label>
+            ))}
+          </div>
+        )}
 
         {page.id && initial.path !== "" && initial.path !== "ar" && (
           <button

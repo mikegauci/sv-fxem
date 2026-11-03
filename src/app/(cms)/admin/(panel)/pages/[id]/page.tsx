@@ -1,3 +1,5 @@
+import { requireAdminPage } from "@/lib/auth/admin";
+import { hasAdminCapability } from "@/lib/admin/capabilities";
 import { notFound } from "next/navigation";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { PageEditor } from "@/components/admin/page-editor";
@@ -12,12 +14,13 @@ export const instant = false;
 export default async function EditPage({
   params,
 }: PageProps<"/admin/pages/[id]">) {
+  const user = await requireAdminPage("pages");
   const { id } = await params;
   const db = await createClient();
   const { data: page, error } = await db
     .from("pages")
     .select(
-      "id, path, title, status, language, translation_id, seo, kind, page_sections(id, position, kind, label, html)",
+      "id, updated_at, path, title, status, language, translation_id, seo, kind, custom_code, page_sections(id, position, kind, label, html, options)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -37,9 +40,18 @@ export default async function EditPage({
     title: page.title,
     status: page.status,
     seo: (page.seo ?? {}) as PageInput["seo"],
+    ...(hasAdminCapability(user)
+      ? { customCode: page.custom_code as PageInput["customCode"] }
+      : {}),
     sections: [...page.page_sections]
       .sort((a, b) => a.position - b.position)
-      .map((s) => ({ id: s.id, kind: s.kind, label: s.label, html: s.html })),
+      .map((s) => ({
+        id: s.id,
+        kind: s.kind,
+        label: s.label,
+        html: s.html,
+        options: s.options,
+      })),
   };
   return (
     <>
@@ -48,7 +60,8 @@ export default async function EditPage({
         description={`/${page.path}${page.path ? "/" : ""}`}
       />
       <PageEditor
-        key={page.id}
+        fullAdmin={hasAdminCapability(user)}
+        key={`${page.id}:${page.updated_at}`}
         initial={initial}
         translation={twin ?? null}
         publicPath={

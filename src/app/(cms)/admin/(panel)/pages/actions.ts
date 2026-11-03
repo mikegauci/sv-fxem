@@ -1,5 +1,13 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { hasAdminCapability } from "@/lib/admin/capabilities";
+import {
+  buildIframeEmbed,
+  normalizeRichEmbeds,
+  withoutEmbeds,
+  scriptChanged,
+  scriptGuardMessage,
+} from "@/lib/admin/embeds.mjs";
 import { assertAdmin } from "@/lib/auth/admin";
 import { cleanPagePath } from "@/lib/admin/page-paths.mjs";
 import { revalidateContent } from "@/lib/site/revalidate";
@@ -8,7 +16,9 @@ import type { Json } from "@/lib/supabase/database.types";
 
 export type SectionInput = {
   id: string | null;
-  kind: "html" | "rich_text";
+  editorKey?: string;
+  kind: "html" | "rich_text" | "embed";
+  options?: Json;
   label: string;
   html: string;
 };
@@ -22,6 +32,7 @@ export type PageInput = {
   status: "draft" | "published";
   seo: { title?: string; description?: string; noindex?: boolean };
   sections: SectionInput[];
+  customCode?: { head?: string; bodyEnd?: string };
 };
 
 type Result = { error: string } | { id: string };
@@ -37,7 +48,8 @@ function refresh(...paths: string[]) {
 }
 
 export async function savePage(input: PageInput): Promise<Result> {
-  await assertAdmin("pages");
+  const user = await assertAdmin("pages");
+  const fullAdmin = hasAdminCapability(user);
   const title = input.title.trim();
   if (!title) return { error: "Add a page title." };
   if (title.length > 200) return { error: "The title is too long." };
@@ -48,7 +60,9 @@ export async function savePage(input: PageInput): Promise<Result> {
   const cleaned = cleanPagePath(input.path, input.language);
   if ("error" in cleaned) return { error: cleaned.error! };
   const path = cleaned.path!;
-  if (input.sections.some((s) => !["html", "rich_text"].includes(s.kind)))
+  if (
+    input.sections.some((s) => !["html", "rich_text", "embed"].includes(s.kind))
+  )
     return { error: "Unknown section type." };
   if (input.sections.some((s) => s.html.length > 500_000))
     return { error: "A section is too large." };
@@ -57,7 +71,7 @@ export async function savePage(input: PageInput): Promise<Result> {
   const previous = input.id
     ? await db
         .from("pages")
-        .select("path, language")
+        .select("path, language, custom_code, page_sections(id, html)")
         .eq("id", input.id)
         .single()
     : null;
@@ -69,6 +83,67 @@ export async function savePage(input: PageInput): Promise<Result> {
     path !== previous.data.path
   )
     return { error: "The homepage URL cannot change." };
+
+  const sections = [];
+  const ids = new Set<string>();
+  for (const section of input.sections) {
+    if (
+      section.id &&
+      (ids.has(section.id) ||
+        !previous?.data.page_sections.some((s) => s.id === section.id))
+    )
+      return { error: "Invalid section id. Reload and try again." };
+    if (section.id) ids.add(section.id);
+    let html = section.html;
+    try {
+      if (section.kind === "rich_text") html = normalizeRichEmbeds(html);
+    } catch (e) {
+      return { error: (e as Error).message };
+    }
+    const options = section.options as Record<string, unknown> | null;
+    if (section.kind === "embed") {
+      if (options?.mode === "iframe") {
+        try {
+          html = buildIframeEmbed(options);
+        } catch (e) {
+          return { error: (e as Error).message };
+        }
+      } else if (options?.mode !== "code")
+        return { error: "Choose an embed mode." };
+      if (new TextEncoder().encode(html).length > 100_000)
+        return { error: "Embed HTML is limited to 100 KB." };
+      if (
+        !fullAdmin &&
+        options?.mode === "code" &&
+        (!section.id ||
+          !previous?.data.page_sections.some(
+            (s) => s.id === section.id && s.html === html,
+          ))
+      )
+        return { error: scriptGuardMessage(section.label) };
+    }
+    const old = previous?.data.page_sections.find((s) => s.id === section.id);
+    if (!fullAdmin && scriptChanged(old?.html ?? "", html))
+      return { error: scriptGuardMessage(section.label) };
+    sections.push({ ...section, html });
+  }
+  if (
+    input.customCode &&
+    ((typeof input.customCode.head !== "string" &&
+      input.customCode.head !== undefined) ||
+      (typeof input.customCode.bodyEnd !== "string" &&
+        input.customCode.bodyEnd !== undefined))
+  )
+    return { error: "Invalid page code." };
+  if (JSON.stringify(input.customCode ?? {}).length > 200_000)
+    return { error: "Page code is too large." };
+  if (
+    !fullAdmin &&
+    input.customCode &&
+    JSON.stringify(input.customCode) !==
+      JSON.stringify(previous?.data.custom_code ?? {})
+  )
+    return { error: "Only full admins can change page code." };
 
   let layout: Json | undefined;
   if (!input.id) {
@@ -96,12 +171,16 @@ export async function savePage(input: PageInput): Promise<Result> {
       translation_id: input.translationId,
       kind: "page",
       ...(layout ? { layout } : {}),
+      ...(fullAdmin && input.customCode
+        ? { custom_code: input.customCode }
+        : {}),
     } as Json,
-    new_sections: input.sections.map((s) => ({
+    new_sections: sections.map((s) => ({
       id: s.id,
       kind: s.kind,
       label: s.label.trim().slice(0, 120),
       html: s.html,
+      options: s.options ?? null,
     })) as Json,
   });
   if (error)
@@ -156,7 +235,13 @@ export async function createTranslation(id: string): Promise<Result> {
     seo: (page.seo ?? {}) as PageInput["seo"],
     sections: [...page.page_sections]
       .sort((a, b) => a.position - b.position)
-      .map((s) => ({ id: null, kind: s.kind, label: s.label, html: s.html })),
+      .filter((s) => s.kind !== "embed")
+      .map((s) => ({
+        id: null,
+        kind: s.kind,
+        label: s.label,
+        html: withoutEmbeds(s.html),
+      })),
   });
 }
 

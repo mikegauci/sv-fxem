@@ -100,6 +100,22 @@ Content import (CMS stage 2): `node --env-file=.env.local scripts/import-content
 
 The original visual assets and browser-side vendor scripts are in `public/assets/`; original vendor license headers are retained. `migration/assets.json` records the source URL for each asset. `migration/routes.json` records the bilingual route inventory. `npm run import:site` rebuilds the page snapshots from the original site.
 
+## Page editing, rich text and embeds
+
+Admin → Pages edits each language independently. In a designed section, Content exposes small formatting toolbars for text blocks (bold, italic, underline, links, line breaks and clear formatting), plus the existing link/image fields. The section's outer tags, classes and styles stay intact; theme spans keep their class/style. Unsupported markup falls back to plain text fields, and HTML remains available. Arabic text and toolbars follow RTL direction. Opening a section does not rewrite its HTML.
+
+“Convert to rich text” keeps text, headings, lists, links and images while replacing the designed layout with plain formatted text. Iframes and scripts become inert embed cards. “Undo convert” restores the original until saving. New text sections support an Embed toolbar button, with Edit and Remove controls on each card.
+
+“+ Embed” adds a section. Iframe mode accepts a public HTTPS URL or a pasted iframe snippet, an accessible title, a pixel height or aspect ratio, fullscreen and an optional sandbox. The server constructs iframe HTML from these settings. Code mode accepts HTML/JavaScript and an optional container; it requires a full admin. Embeds are limited to 100 KB. Editors display code and placeholders without running snippets. Use “Apply embed” to stage the settings, then Save the page.
+
+Full admins also have Custom code fields for `<head>` and before `</body>`. Code runs on that page and language only, including standalone pages and the saved-page preview; it is not added to search/404 pages. Creating a translation does not copy embed sections, rich-text embed cards or custom page code. Add them separately for the other language.
+
+Only full admins (`profiles.role = 'admin'` and `admin_capabilities IS NULL`) can add/change scripts. Pages-only admins may edit text around existing scripts, reorder or delete whole sections containing them, and add iframes; adding, changing or copying executable content is rejected. Script signatures include script tags, event handlers, JavaScript URLs, iframe srcdoc, object/embed/base tags and meta refresh. App checks and database triggers protect sections, menu/footer widget HTML and page code. Service-role imports/maintenance remain supported. Existing code sections can be saved unchanged by limited admins.
+
+The admin and public site share an origin, and the Supabase auth cookies are readable by JavaScript. A full admin's snippet can act with the privileges of an admin viewing its public page or preview. The saved-page preview explicitly warns that it runs scripts; the editor itself never renders snippet HTML. A separate admin subdomain is a possible later hardening. There is deliberately no Content-Security-Policy in this implementation, because arbitrary third-party widgets need to keep working. Sandboxing is optional and can break widgets.
+
+Embed atoms retain their complete HTML in a TipTap attribute. The DOM serializer emits an encoded `data-code` placeholder, which is expanded using string operations before saving directly renderable HTML inside `div[data-fxem-embed]`. Public rendering needs no base64 expansion. Tests verify script-body round trips, inert editor DOM, and all 324 imported sections through the same parse/serialize path used by Content fields.
+
 ## Deployment boundaries
 
 - Dedicated Vercel project: `sv-fxem` under `mikegaucis-projects`.

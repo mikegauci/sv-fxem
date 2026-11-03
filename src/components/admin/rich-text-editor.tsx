@@ -1,8 +1,13 @@
 "use client";
 
-import Image from "@tiptap/extension-image";
+import {
+  hasUnsupportedRichMarkup,
+  expandRichEmbeds,
+} from "@/lib/admin/embeds.mjs";
+import { richTextExtensions, embedNodeCode } from "./rich-text-schema";
+import { EmbedForm } from "./embed-form";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+
 import { useRef, useState } from "react";
 import { MediaPicker, type PickedMedia } from "@/components/admin/media-picker";
 import { mediaUrl } from "@/lib/media";
@@ -10,9 +15,7 @@ import { mediaUrl } from "@/lib/media";
 // Imported WordPress posts use galleries, columns and share blocks that
 // Tiptap's schema would flatten. Those posts are edited as HTML instead.
 export function needsHtmlMode(html: string) {
-  return /<(div|figure|iframe|table|video|section|style|script)\b|\sclass="/i.test(
-    html,
-  );
+  return hasUnsupportedRichMarkup(html);
 }
 
 function imageHtml(media: PickedMedia) {
@@ -27,14 +30,19 @@ function imageHtml(media: PickedMedia) {
 export function RichTextEditor({
   value,
   onChange,
+  fullAdmin = false,
+  dir = "ltr",
 }: {
   value: string;
   onChange: (html: string) => void;
+  fullAdmin?: boolean;
+  dir?: "ltr" | "rtl";
 }) {
   const [mode, setMode] = useState<"visual" | "html">(() =>
     needsHtmlMode(value) ? "html" : "visual",
   );
   const locked = needsHtmlMode(value);
+  const activeMode = locked ? "html" : mode;
 
   return (
     <div className="rounded border border-[#ddd] bg-white">
@@ -46,7 +54,7 @@ export function RichTextEditor({
             disabled={m === "visual" && locked}
             onClick={() => setMode(m)}
             className={`rounded-t px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-40 ${
-              mode === m ? "bg-[#f5f5f5] font-semibold" : "text-muted"
+              activeMode === m ? "bg-[#f5f5f5] font-semibold" : "text-muted"
             }`}
           >
             {m === "visual" ? "Visual" : "HTML"}
@@ -59,8 +67,13 @@ export function RichTextEditor({
           </span>
         )}
       </div>
-      {mode === "visual" ? (
-        <VisualEditor value={value} onChange={onChange} />
+      {activeMode === "visual" ? (
+        <VisualEditor
+          value={value}
+          onChange={onChange}
+          fullAdmin={fullAdmin}
+          dir={dir}
+        />
       ) : (
         <HtmlEditor value={value} onChange={onChange} />
       )}
@@ -71,27 +84,27 @@ export function RichTextEditor({
 function VisualEditor({
   value,
   onChange,
+  fullAdmin = false,
+  dir = "ltr",
 }: {
   value: string;
   onChange: (html: string) => void;
+  fullAdmin?: boolean;
+  dir?: "ltr" | "rtl";
 }) {
   const [picking, setPicking] = useState(false);
+  const [embedding, setEmbedding] = useState(false);
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: { levels: [2, 3, 4] },
-        link: { openOnClick: false, autolink: true },
-      }),
-      Image,
-    ],
+    extensions: richTextExtensions(fullAdmin),
     content: value,
     immediatelyRender: false,
     editorProps: {
       attributes: {
+        dir,
         class: "prose-cms min-h-[420px] px-5 py-4 outline-none",
       },
     },
-    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    onUpdate: ({ editor }) => onChange(expandRichEmbeds(editor.getHTML())),
   });
 
   const state = useEditorState({
@@ -191,6 +204,7 @@ function VisualEditor({
       run: () => chain().setHorizontalRule().run(),
     },
     { label: "Image", title: "Insert image", run: () => setPicking(true) },
+    { label: "Embed", title: "Insert embed", run: () => setEmbedding(true) },
     { label: "Undo", title: "Undo", run: () => chain().undo().run() },
     { label: "Redo", title: "Redo", run: () => chain().redo().run() },
   ];
@@ -212,6 +226,25 @@ function VisualEditor({
           </button>
         ))}
       </div>
+      {embedding && (
+        <EmbedForm
+          fullAdmin={fullAdmin}
+          onCancel={() => setEmbedding(false)}
+          onSave={(code, options) => {
+            chain()
+              .insertContent({
+                type: "embed",
+                attrs: {
+                  mode: options.mode,
+                  code: embedNodeCode(code, options),
+                  options,
+                },
+              })
+              .run();
+            setEmbedding(false);
+          }}
+        />
+      )}
       <EditorContent editor={editor} />
       <MediaPicker
         open={picking}
@@ -236,7 +269,6 @@ function HtmlEditor({
 }) {
   const area = useRef<HTMLTextAreaElement>(null);
   const [picking, setPicking] = useState(false);
-  const [preview, setPreview] = useState(true);
 
   function insert(html: string) {
     const el = area.current;
@@ -255,16 +287,11 @@ function HtmlEditor({
         >
           Insert image
         </button>
-        <label className="ml-auto flex items-center gap-1.5">
-          <input
-            type="checkbox"
-            checked={preview}
-            onChange={(e) => setPreview(e.target.checked)}
-          />
-          Preview
-        </label>
+        <span className="text-muted">
+          Code is never executed in the editor. Use the saved-page preview.
+        </span>
       </div>
-      <div className={preview ? "grid lg:grid-cols-2" : ""}>
+      <div>
         <textarea
           ref={area}
           value={value}
@@ -272,12 +299,6 @@ function HtmlEditor({
           spellCheck={false}
           className="min-h-[520px] w-full resize-y p-4 font-mono text-xs leading-relaxed outline-none"
         />
-        {preview && (
-          <div
-            className="prose-cms max-h-[720px] overflow-y-auto border-t border-[#eee] px-5 py-4 lg:border-t-0 lg:border-l"
-            dangerouslySetInnerHTML={{ __html: value }}
-          />
-        )}
       </div>
       <MediaPicker
         open={picking}

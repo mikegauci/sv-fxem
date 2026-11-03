@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { load } from 'cheerio';
-import { metadata } from '../src/lib/seo/metadata.mjs';
 import { origin, shortLinkPattern, isProduction, languageOf, baseOf, urlOf, indexable, details, alternates, sitemap, robots, robotsDirective, graph } from '../src/lib/seo/site.mjs';
 const pages = [{ slug: '', kind: 'page' }, ...JSON.parse(await fs.readFile('migration/routes.json', 'utf8'))];
 test('WordPress short-link redirects cannot loop when Vercel preserves the query', () => {

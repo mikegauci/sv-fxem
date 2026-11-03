@@ -82,7 +82,7 @@ async function initialize(form) {
   async function load() {
     ready = false; buttons.forEach(button => button.disabled = true); message('Loading form options…');
     try {
-      const response = await fetch(`/api/currentdesk/${kind}`, { credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(30000) });
+      const response = await fetch(`/api/currentdesk/${kind}/`, { credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(30000) });
       const result = await response.json();
       if (!response.ok || !result.ok) throw Error(result.message || 'Unable to load form options. Please try again.');
       bootstrap = result;
@@ -107,7 +107,7 @@ async function initialize(form) {
     if (!showErrors(errors)) return;
     submitting = true; buttons.forEach(button => button.disabled = true); message('Submitting…');
     try {
-      const response = await fetch(`/api/currentdesk/${kind}`, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields, csrf: bootstrap.csrf, requestId, website: form.elements.namedItem('website')?.value || '' }), signal: AbortSignal.timeout(45000) });
+      const response = await fetch(`/api/currentdesk/${kind}/`, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields, csrf: bootstrap.csrf, requestId, website: form.elements.namedItem('website')?.value || '' }), signal: AbortSignal.timeout(45000) });
       const result = await response.json();
       if (!response.ok || !result.ok) {
         if ([400, 422].includes(response.status)) requestId = crypto.randomUUID();

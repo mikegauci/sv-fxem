@@ -1,0 +1,24 @@
+pnpm-lock.yaml
+.next
+node_modules
+next-env.d.ts
+public/assets
+public/_fxem
+src/data
+src/content
+src/generated
+migration
+.vercel
+# Legacy modules and tests keep their original compact style.
+src/lib/contact
+src/lib/currentdesk
+src/lib/footer
+src/lib/search
+src/lib/security
+src/lib/seo
+src/lib/site/*.mjs
+src/scripts
+scripts
+tests
+supabase
+public/preview-forms.js

@@ -2,7 +2,7 @@ import { messages, validateContact } from '../lib/contact/validation.mjs';
 for (const form of document.querySelectorAll('[data-contact-form]')) initialize(form);
 async function initialize(form) {
   const language = form.dataset.contactForm === 'ar' ? 'ar' : 'en', t = messages[language];
-  const endpoint = `/api/contact?lang=${language}`, submit = form.querySelector('[type=submit]');
+  const endpoint = `/api/contact/?lang=${language}`, submit = form.querySelector('[type=submit]');
   const status = form.querySelector('.wpcf7-response-output');
   status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); status.removeAttribute('aria-hidden'); status.hidden = true;
   const mapping = { name: 'your-name', email: 'your-email', subject: 'your-subject', message: 'your-message' };

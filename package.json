@@ -1,34 +1,48 @@
 {
   "name": "sv-fxem",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "astro dev --host 0.0.0.0",
-    "build": "node scripts/build-search-index.mjs && astro build && node scripts/build-seo.mjs",
-    "preview": "astro preview --host 0.0.0.0",
-    "import:homepage": "node scripts/import-homepage.mjs",
-    "import:site": "node scripts/import-site.mjs",
+    "dev": "node scripts/prebuild.mjs && next dev",
+    "build": "node scripts/prebuild.mjs && next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "node --test tests/*.test.mjs",
-    "predev": "node scripts/build-search-index.mjs"
+    "import:site": "node scripts/import-site.mjs"
   },
   "dependencies": {
-    "@astrojs/vercel": "11.0.17",
-    "astro": "7.4.4"
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "@tiptap/extension-image": "^3.32.0",
+    "@tiptap/pm": "^3.32.0",
+    "@tiptap/react": "^3.32.0",
+    "@tiptap/starter-kit": "^3.32.0",
+    "cheerio": "1.1.2",
+    "next": "16.4.3",
+    "postcss": "8.5.32",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-icons": "^5.7.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "cheerio": "1.1.2",
-    "postcss": "8.5.32"
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "esbuild": "^0.25.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
   "engines": {
     "node": "24.x"
   },
-  "overrides": {
-    "@vercel/routing-utils": {
-      "path-to-regexp": "6.3.0"
-    },
-    "@vercel/cli-config": {
-      "zod": "4.6.7"
-    }
-  }
+  "packageManager": "pnpm@12.11.2"
 }

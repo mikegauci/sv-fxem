@@ -1,29 +1,4 @@
 {
-  "framework": "astro",
-  "buildCommand": "npm run build",
-  "redirects": [
-    {
-      "source": "/deposit_request",
-      "has": [
-        {
-          "type": "query",
-          "key": "lang",
-          "value": "ar"
-        }
-      ],
-      "destination": "/ar/deposit_request/",
-      "permanent": false
-    }
-  ],
-  "headers": [
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs"
 }

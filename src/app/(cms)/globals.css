@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/* Admin (CMS) styles only. The public site keeps the original theme CSS. */
+@theme {
+  --font-sans:
+    "Poppins", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  --color-brand: #55b8c4; /* FXEM teal: active links, buttons */
+  --color-brand-dark: #3f9ba6; /* button hover */
+  --color-ink: #1d2733; /* sidebar, headings */
+  --color-body: #2b2f33; /* body text */
+  --color-muted: #6b7280; /* secondary text */
+  --color-line: #e5e7eb;
+  --color-panel: #f3f4f6;
+  --color-heading: #1d2733;
+  --color-coral: #b42318; /* errors */
+  --color-footer: #cfd8e0; /* sidebar links */
+  --color-footer-muted: #8a99a8; /* sidebar section titles */
+}
+
+@layer base {
+  body {
+    @apply text-body bg-white font-sans;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  b,
+  strong {
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .cms-button {
+    @apply bg-brand hover:bg-brand-dark inline-block rounded-lg px-5 py-2.5 text-base leading-none font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Rich text in the editor preview, close to the site's typography. */
+  .prose-cms p {
+    @apply mb-3;
+  }
+  .prose-cms a {
+    @apply text-brand underline;
+  }
+  .prose-cms h2,
+  .prose-cms h3,
+  .prose-cms h4 {
+    @apply mt-6 mb-3 font-bold;
+  }
+  .prose-cms h2 {
+    @apply text-[26px] leading-tight;
+  }
+  .prose-cms h3 {
+    @apply text-[22px] leading-tight;
+  }
+  .prose-cms ul,
+  .prose-cms ol {
+    @apply mb-4 ml-8 list-outside;
+  }
+  .prose-cms ul {
+    @apply list-disc;
+  }
+  .prose-cms ol {
+    @apply list-decimal;
+  }
+  .prose-cms img {
+    @apply h-auto max-w-full;
+  }
+  .prose-cms [dir="rtl"],
+  .prose-cms:lang(ar) {
+    text-align: right;
+  }
+}

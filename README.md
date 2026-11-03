@@ -1,8 +1,8 @@
-# FXEM — Astro design preview
+# FXEM — sv.fxem.com
 
-The English and Arabic content from `https://sv.fxem.com/` is reproduced in Astro. The preview contains 72 content routes: 37 English and 35 Arabic. Content is statically generated; the English and Arabic live-account, demo-account and partner forms use server-side Astro API endpoints on Vercel.
+The English and Arabic site at `https://sv.fxem.com/`, rebuilt on **Next.js + Supabase** (Vercel) with an in-house bilingual CMS modelled on the Rotta and Battery Factory rebuilds. The site has 72 content routes: 37 English and 35 Arabic.
 
-Original copy, page-specific styles, body classes, spacing, imagery, fonts, icons, menus, accordions, tabs, tables and third-party embeds are retained. No PHP or WordPress server is needed to build or serve the Astro pages.
+The CMS is being built in stages (one PR each): foundation → content import → site reads from Supabase → page editor → menus and footer → news. Until the import lands, public pages are rendered from the original page snapshots in `src/data/pages/` and `src/content/`, with the same markup as the earlier Astro preview (`node scripts/compare-parity.mjs <astro output dir>` checks every page).
 
 ## Scope
 
@@ -20,9 +20,9 @@ The original TradingView, Investing.com calculator and LiveChat embeds remain ex
 
 ## CurrentDesk registration
 
-The `/open-live-account/`, `/open-demo-account/` and `/become-our-partner/` pages and their `/ar/` equivalents preserve their original fields and multistep design. Their PHP handlers have been replaced with `/api/currentdesk/live`, `/api/currentdesk/demo` and `/api/currentdesk/partner` Astro endpoints, using the Vercel adapter. PHP files, PHAR packages and source error logs are not deployed.
+The `/open-live-account/`, `/open-demo-account/` and `/become-our-partner/` pages and their `/ar/` equivalents preserve their original fields and multistep design. Their PHP handlers have been replaced with `/api/currentdesk/live/`, `/api/currentdesk/demo/` and `/api/currentdesk/partner/` Next.js route handlers. PHP files, PHAR packages and source error logs are not deployed.
 
-Credentials are server-only environment variables (`.env` locally, encrypted Preview variables on Vercel):
+Credentials are server-only environment variables (`.env`/`.env.local` locally, encrypted Preview variables on Vercel):
 
 - `CURRENTDESK_LIVE_AUTHORIZATION`
 - `CURRENTDESK_DEMO_AUTHORIZATION`
@@ -33,11 +33,11 @@ The supplied PHP authentication values were transferred directly into ignored/lo
 
 The original PHP registration contracts are retained:
 
-| Form | CurrentDesk endpoint | Category | `account-demo-status` |
-| --- | --- | --- | --- |
-| Live | `/registration/client/individual` | 1 | `"true"` |
-| Demo | `/registration/lead` | 1 | `"false"` |
-| Partner | `/registration/partner/individual` | 2 | `"true"` |
+| Form    | CurrentDesk endpoint               | Category | `account-demo-status` |
+| ------- | ---------------------------------- | -------- | --------------------- |
+| Live    | `/registration/client/individual`  | 1        | `"true"`              |
+| Demo    | `/registration/lead`               | 1        | `"false"`             |
+| Partner | `/registration/partner/individual` | 2        | `"true"`              |
 
 All use platform 9 and currency 5. Live/partner retain the supplied phone/mobile mapping and address-months default. Live marketing query parameters retain the PHP field-name mappings. The demo English-contact checkbox now maps to `lead-english-status`, rather than being overwritten with the legacy hardcoded false value.
 
@@ -47,13 +47,13 @@ The API requires same-origin JSON requests and a signed, form-specific token bou
 
 The preview uses the existing CurrentDesk service. A visitor's final Submit action can create a real CurrentDesk registration. Verification includes live read-only dictionaries, mocked registration requests, and one explicitly approved real demo request accepted on 29 October 2026. The browser reached the demo confirmation page. Inbox delivery and the back-office record have not been independently checked; live and partner registrations remain unsubmitted. See `migration/currentdesk-real-test.json`.
 
-Run `npm test` for the focused mock API/validation tests. Keep `.env` private; `.env.example` contains names only.
+Run `pnpm test` for the focused mock API/validation tests. Keep `.env` private; `.env.example` contains names only.
 
 ## Contact forms / Mailjet
 
 Both `/contact-us/` and `/ar/contact-us/` preserve the original layout, contact details and four form fields. The original Arabic page's English placeholders and submit label are preserved. Validation and delivery status messages follow the page language. Name and email are required; subject and message remain optional as in the original.
 
-The server-only `/api/contact` endpoint calls [Mailjet Send API v3.1](https://dev.mailjet.com/docs/email-api/send-api-v31/send-basic-email) over HTTPS using Basic authentication. It sends one plain-text message to a fixed configured inbox, from a verified configured sender, with the visitor as ReplyTo. User input cannot change the recipient or sender. No auto-reply is sent.
+The server-only `/api/contact/` endpoint calls [Mailjet Send API v3.1](https://dev.mailjet.com/docs/email-api/send-api-v31/send-basic-email) over HTTPS using Basic authentication. It sends one plain-text message to a fixed configured inbox, from a verified configured sender, with the visitor as ReplyTo. User input cannot change the recipient or sender. No auto-reply is sent.
 
 Required private server environment variables:
 
@@ -81,21 +81,27 @@ This phase requires unchanged content and design rather than repairing unrelated
 ## Development
 
 ```sh
-npm ci
-npm run dev
-npm run build
+pnpm install
+pnpm dev          # http://localhost:3000 (the Claude preview runs it on 3002)
+pnpm build        # production build (stop `pnpm dev` first)
+pnpm test         # form, SEO, routing and search tests
+pnpm typecheck
+pnpm lint
 ```
 
-English homepage fragments live in `src/content/`. Other page snapshots, including the Arabic homepage, live in `src/data/pages/`, rendered with their individual HTML language/direction, head styles, header, content, footer and body classes by `src/pages/[...slug].astro`.
+`scripts/prebuild.mjs` runs before `dev` and `build`: it bundles the browser form scripts into `public/_fxem/` and writes `src/generated/routing.json` for the proxy.
 
-The original visual assets and browser-side vendor scripts are in `public/assets/`; original vendor license headers are retained. `migration/assets.json` records the source URL for each asset. `migration/routes.json` records the bilingual route inventory.
+- Public pages: `src/app/[[...path]]/route.ts` renders each page snapshot (`src/lib/site/`), applies the SEO layer (`src/lib/seo/document.mjs`) and caches the result (`"use cache"`, tag `pages`). Unknown paths get the bilingual 404 with HTTP 404. Search is `src/app/search` and `src/app/ar/search`.
+- `src/proxy.ts`: WordPress short links (`?p=`, `?page_id=`), `?lang=`, `?s=` on the homepages, `/index.php`, the `redirects` table, the `X-Robots-Tag` policy, and the Supabase session refresh for `/admin` and `/auth`.
+- CMS: `src/app/(cms)/admin` (sign-in at `/admin/login/`). Dashboard, Media, Users and Redirects are live; Pages, News, Menus and Footer follow in later PRs.
+- Database: SQL in `supabase/migrations/`, applied with the Supabase connector to project `sv-fxem` (ref `ugzcbnjgftthksxeglqc`, eu-central-1). English and Arabic versions of a page share a `translation_id`; menus and footer widgets are per language.
 
-`npm run import:site` rebuilds editable page snapshots and localizes media/CSS/font references. Missing raw sources are fetched from their public original URLs. Add `-- --refresh` to capture pages again. Raw source HTML is gitignored. `import:homepage` is a compatibility alias to the full importer so homepage links stay consistent with the migrated route inventory.
+The original visual assets and browser-side vendor scripts are in `public/assets/`; original vendor license headers are retained. `migration/assets.json` records the source URL for each asset. `migration/routes.json` records the bilingual route inventory. `npm run import:site` rebuilds the page snapshots from the original site.
 
 ## Deployment boundaries
 
 - Dedicated Vercel project: `sv-fxem` under `mikegaucis-projects`.
-- Deploy with `npx vercel deploy --scope mikegaucis-projects --project sv-fxem --environment preview --yes`.
+- Preview deploys need `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_SECRET_KEY` alongside the CurrentDesk/Mailjet variables.
 - Do not promote to production, attach `sv.fxem.com`, or modify DNS during this phase.
 - Preview/development builds block indexing through robots.txt, HTML robots metadata and X-Robots-Tag headers. Production-mode builds allow the 62 content URLs and keep utility pages and APIs out of search.
 - Vercel's existing deployment protection is retained; the preview may require Vercel sign-in.
@@ -103,7 +109,7 @@ The original visual assets and browser-side vendor scripts are in `public/assets
 
 ## SEO and launch checks
 
-`npm run build` runs Astro and then `scripts/build-seo.mjs` against the final Vercel output. Source snapshots retain their original content; the deployed HTML receives the SEO layer. Local `npm run dev` serves the original preview metadata; use a completed build to inspect final SEO output.
+Every rendered page passes through `src/lib/seo/document.mjs` (dev and production alike). Source snapshots retain their original content; the served HTML receives the SEO layer.
 
 - `src/lib/seo/metadata.mjs` contains individually written English and Arabic titles/descriptions for all 72 content routes. Visible copy is unchanged.
 - Canonicals use `https://sv.fxem.com` and preserve existing permalink paths. Language alternatives are reciprocal and generated from the migrated inventory, with English as x-default. The two legacy Arabic category slugs are explicitly paired with their English equivalents.
@@ -111,16 +117,14 @@ The original visual assets and browser-side vendor scripts are in `public/assets
 - JSON-LD includes Organization, WebSite, WebPage/ContactPage/AboutPage, BreadcrumbList on non-home pages, and Article on the six migrated article pages. Only source-backed identity, headlines, authors and valid featured images are used. Missing publication dates, ratings, broken media and unverified business claims are not invented. The original articles still contain placeholder copy; this phase does not rewrite it.
 - Open Graph and Twitter metadata use the localized page titles/descriptions and existing FXEM logo. No new marketing images are invented.
 - Each main content area has one H1. Repeated homepage slider titles and skipped heading levels use accessible heading roles with corrected levels. Build-generated CSS aliases preserve their original type styles at responsive breakpoints; a screen-reader-only primary heading supplies the homepage/utility H1.
-- The build opens indexing only when `VERCEL_ENV=production`. `NODE_ENV=production` alone is insufficient. Preview/development stays noindex with robots.txt blocking crawling and Vercel authentication retained. Generated Vercel output headers follow the same policy; there is no unconditional noindex header in vercel.json.
+- Indexing opens only when `VERCEL_ENV=production`. `NODE_ENV=production` alone is insufficient. Preview/development stays noindex with robots.txt blocking crawling and Vercel authentication retained. The proxy's `X-Robots-Tag` headers follow the same policy.
 - WordPress `p`/`page_id` short links, `index.php` and opposite-language `lang` query links redirect to existing canonical paths. Existing permalinks do not move. A branded bilingual error page is served with HTTP 404 and noindex for unmatched paths.
 - Images receive asynchronous decoding and offscreen image lazy loading. Calculator overlays and product tab widths are constrained on mobile, and offscreen honeypots are clipped inside the viewport to prevent RTL horizontal scrolling; desktop dimensions remain unchanged. Original external market widgets and LiveChat remain third-party performance dependencies.
 
-Run `node scripts/verify-seo.mjs` after a build for metadata/schema, heading, content-preservation, link/asset and secret checks. Run `VERCEL_ENV=production npm run build` followed by `VERCEL_ENV=production node scripts/verify-seo.mjs` to test production policy locally; this does not deploy. Restore a normal preview build before preview inspection. `npm test` covers both environment policies and SEO inventory alongside the form tests.
+`pnpm test` covers both environment policies, the SEO inventory and the routing rules alongside the form tests.
 
 A production launch still requires explicit authorization, domain/DNS cutover and post-launch Search Console sitemap/URL inspection checks. Protected previews cannot establish Google indexing or real-user Core Web Vitals. Real registration and email delivery tests remain separate from this SEO work.
 
-The dependency audit also reports 8 flagged packages (1 critical, 6 high, 1 low) in the existing Astro 5 / Vercel adapter 9 dependency tree. npm proposes major framework/adapter upgrades. These have not been applied as part of the SEO change; they need a separate upgrade and regression check before launch. See `migration/seo-qa.md` for the audit scope and limits.
-
 ## Reverse-proxy host validation
 
-The real demo test caught Astro reconstructing API request URLs as localhost when no allowed host patterns were configured, which correctly triggered the custom same-origin rejection before CurrentDesk was called. `security.allowedDomains` now uses an exact hostname allowlist: the original site, the project domain and Vercel-provided deployment/branch aliases. Local HTTP hosts are trusted only outside Vercel. There is no wildcard trust for arbitrary Vercel tenants and neither origin nor CSRF validation has been disabled. NodeApp regression tests reproduce the proxy URL behavior and reject unapproved forwarded hosts.
+The form APIs rebuild the request URL from the forwarded host only when that host is on an exact allowlist (`src/lib/security/request.mjs`, `hosts.mjs`): the original site, the project domain and Vercel-provided deployment/branch aliases. Unknown hosts get a localhost origin, so the same-origin and CSRF checks reject them. Local HTTP hosts are trusted only outside Vercel. There is no wildcard trust for arbitrary Vercel tenants.

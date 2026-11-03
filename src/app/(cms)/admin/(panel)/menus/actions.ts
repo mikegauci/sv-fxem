@@ -2,6 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { assertAdmin } from "@/lib/auth/admin";
 import { checkItem, syncMobile } from "@/lib/admin/menu-items.mjs";
+import { feedSettings, fetchNews } from "@/lib/footer/news.mjs";
 import { revalidateContent } from "@/lib/site/revalidate";
 import { createClient } from "@/lib/supabase/server";
 import type { Json, Tables } from "@/lib/supabase/database.types";
@@ -85,6 +86,12 @@ export async function saveFooter(
   await assertAdmin("menus");
   if (!["en", "ar"].includes(language)) return { error: "Unknown language." };
   const counts = new Map<string, number>();
+  for (const w of input)
+    if (w.kind === "news" && w.options?.feed) {
+      const result = feedSettings(w.options.feed);
+      if (result.error) return { error: result.error };
+      w.options = { ...w.options, feed: result.feed };
+    }
   const widgets = input.map((w) => {
     const area = w.options?.area ?? "above";
     const key = `${area}:${w.column_index}`;
@@ -110,4 +117,24 @@ export async function saveFooter(
   if (error) return { error: error.message };
   revalidateContent({ chrome: language });
   revalidatePath("/admin/footer/");
+}
+
+// Tries a news feed before it is saved: its first headlines, or why it failed.
+export async function checkFeed(
+  input: Record<string, unknown>,
+): Promise<{ error: string } | { titles: string[] }> {
+  await assertAdmin("menus");
+  const { feed, error } = feedSettings(input);
+  if (!feed) return { error: error! };
+  try {
+    const items = await fetchNews(feed.url, feed.count);
+    return { titles: items.map((i: { title: string }) => i.title) };
+  } catch (e) {
+    return {
+      error:
+        e instanceof Error && !e.name.includes("Abort") && !/fetch failed/.test(e.message)
+          ? e.message
+          : "Could not read that feed.",
+    };
+  }
 }

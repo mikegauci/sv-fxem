@@ -31,7 +31,7 @@ export default async function Dashboard() {
             <dl className="grid grid-cols-2 gap-y-1 text-sm">
               <dt className="text-muted">Pages</dt>
               <dd>{count(code, "page")}</dd>
-              <dt className="text-muted">News posts</dt>
+              <dt className="text-muted">Blog posts</dt>
               <dd>{count(code, "post")}</dd>
             </dl>
           </section>

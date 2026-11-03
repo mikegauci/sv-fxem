@@ -58,7 +58,7 @@ export type PageLayout = {
 
 export type PageContent = Route & {
   layout: PageLayout;
-  sections: { position: number; html: string }[];
+  sections: { position: number; kind: "html" | "rich_text"; html: string }[];
 };
 
 export async function pageContent(slug: string): Promise<PageContent | null> {
@@ -68,7 +68,7 @@ export async function pageContent(slug: string): Promise<PageContent | null> {
   const { data, error } = await publicDb
     .from("pages")
     .select(
-      "id, path, kind, language, translation_id, wp_id, title, seo, layout, page_sections(position, html)",
+      "id, path, kind, language, translation_id, wp_id, title, seo, layout, page_sections(position, kind, html)",
     )
     .eq("path", slug)
     .eq("status", "published")
@@ -138,7 +138,11 @@ export async function searchablePages() {
     title: string;
     seo: Json;
     layout: Json;
-    page_sections: { position: number; html: string }[];
+    page_sections: {
+      position: number;
+      kind: "html" | "rich_text";
+      html: string;
+    }[];
   }[] = [];
   for (let from = 0; ; from += 100) {
     const { data, error } = await publicDb

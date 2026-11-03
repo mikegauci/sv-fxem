@@ -7,6 +7,7 @@ import {
   attributes,
   siteStyles,
   footer,
+  richTextSection,
 } from "@/lib/site/document.mjs";
 import {
   renderContent,
@@ -20,6 +21,7 @@ import {
   siteChrome,
   siteRoutes,
   type Language,
+  type PageContent,
   type Route,
 } from "@/lib/site/content";
 import { buildSearchIndex, buildSearchShell } from "@/lib/search/pages.mjs";
@@ -40,6 +42,12 @@ export async function pagePaths() {
   return (await siteRoutes()).map((page) => page.slug);
 }
 
+const sectionHtml = (sections: PageContent["sections"]) =>
+  sections.map((s) => ({
+    ...s,
+    html: s.kind === "rich_text" ? richTextSection(s.html) : s.html,
+  }));
+
 // Paths of a page's language versions, from its translation group.
 function languageLinks(page: Route, routes: Route[]) {
   const links: Record<Language, string | null> = { en: null, ar: null };
@@ -54,6 +62,11 @@ function languageLinks(page: Route, routes: Route[]) {
 async function composePage(slug: string) {
   const [page, routes] = await Promise.all([pageContent(slug), siteRoutes()]);
   if (!page) return null;
+  return composeFrom(page, routes);
+}
+
+async function composeFrom(page: PageContent, routes: Route[]) {
+  const slug = page.slug;
   const chrome = await siteChrome(page.language);
   const context = {
     path: pathOf(slug),
@@ -70,7 +83,10 @@ async function composePage(slug: string) {
       ...page.layout,
       slug,
       title: page.title,
-      content: renderContent(page.layout.contentShell, page.sections),
+      content: renderContent(
+        page.layout.contentShell,
+        sectionHtml(page.sections),
+      ),
       header: standalone
         ? ""
         : renderHeader(chrome.header, chrome.primary, context),
@@ -103,6 +119,13 @@ export async function renderPage(slug: string): Promise<Rendered> {
   return { status: 200, html };
 }
 
+// Admin preview of a saved page (drafts included); never cached.
+export async function renderPreview(page: PageContent): Promise<string> {
+  const routes = (await siteRoutes()).filter((r) => r.id !== page.id);
+  const composed = await composeFrom(page, [...routes, page]);
+  return seoDocument(renderSnapshot(composed.snapshot), page, composed.routes);
+}
+
 export async function renderNotFound(): Promise<Rendered> {
   "use cache";
   cacheLife("max");
@@ -130,7 +153,7 @@ async function searchData(language: Language) {
       title: p.title,
       content: renderContent(
         (p.layout as { contentShell: string }).contentShell,
-        p.page_sections,
+        sectionHtml(p.page_sections),
       ),
     })),
   );

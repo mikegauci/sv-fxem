@@ -14,6 +14,8 @@ export const indexable = page => page.slug !== '404' && page.kind !== 'standalon
 export function details(page) {
   if (page.seo?.title) return { title: page.seo.title, description: page.seo.description ?? '' };
   const row = metadata[baseOf(page.slug)];
+  // New CMS pages without SEO fields fall back to their title.
+  if (!row && page.title) return { title: `${page.title} | FXEM`, description: page.seo?.description ?? '' };
   if (!row) throw Error(`Missing SEO metadata: ${page.slug}`);
   const offset = languageOf(page.slug) === 'ar' ? 2 : 0;
   return { title: row[offset], description: row[offset + 1] };

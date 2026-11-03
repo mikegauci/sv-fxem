@@ -1,10 +1,17 @@
 import { connection } from "next/server";
-import { getNews } from "@/lib/footer/news.mjs";
+import { feedSettings, getNews } from "@/lib/footer/news.mjs";
+import { siteChrome } from "@/lib/site/content";
 
-// CNBC finance headlines for the footer widget.
-export async function GET() {
+// Headlines for the footer news block, from the feed set for that language.
+export async function GET(request: Request) {
   await connection();
-  const items = await getNews();
+  const language =
+    new URL(request.url).searchParams.get("lang") === "ar" ? "ar" : "en";
+  const chrome = await siteChrome(language);
+  const block = chrome.widgets.find((w) => w.kind === "news");
+  const options = (block?.options ?? {}) as { feed?: Record<string, unknown> };
+  const { feed } = feedSettings(options.feed);
+  const items = feed ? await getNews(feed) : [];
   return Response.json(
     { items },
     {

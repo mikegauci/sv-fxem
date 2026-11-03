@@ -2,7 +2,7 @@
 
 The English and Arabic site at `https://sv.fxem.com/`, rebuilt on **Next.js + Supabase** (Vercel) with an in-house bilingual CMS modelled on the Rotta and Battery Factory rebuilds. The site has 72 content routes: 37 English and 35 Arabic.
 
-The CMS is being built in stages (one PR each): foundation → content import → site reads from Supabase → page editor → menus and footer → news. Public pages are rendered from the CMS content in Supabase, with the same markup as the earlier Astro preview (`node scripts/compare-parity.mjs <astro output dir>` checks every page). The original page snapshots in `src/data/pages/` and `src/content/` remain as the import source.
+The CMS is being built in stages (one PR each): foundation → content import → site reads from Supabase → page editor → menus and footer → news feed. Public pages are rendered from the CMS content in Supabase, with the same markup as the earlier Astro preview (`node scripts/compare-parity.mjs <astro output dir>` checks every page). The original page snapshots in `src/data/pages/` and `src/content/` remain as the import source.
 
 ## Scope
 
@@ -72,7 +72,7 @@ The contact tests mock Mailjet requests, including success, failures, abuse cont
 
 This phase requires unchanged content and design rather than repairing unrelated source issues:
 
-- The shared footer replaces the failed DailyFX widget with three CNBC finance headlines, fetched through `/api/footer-news`. Headlines are clamped to two lines with a localized publication date underneath, inside a 180px block that fits within the existing footer navigation height; footer grid columns have zero minimum widths so long headlines cannot squeeze other columns; the source link remains available if the feed cannot load. Other source news-page widgets are unchanged.
+- The shared footer replaces the failed DailyFX widget with three CNBC finance headlines, fetched through `/api/footer-news?lang=`. Each language's feed (address, number of headlines, source name and link) is set on the footer's news block in Admin → Footer; without one it uses CNBC finance news. Headlines are clamped to two lines with a localized publication date underneath, inside a 180px block that fits within the existing footer navigation height; footer grid columns have zero minimum widths so long headlines cannot squeeze other columns; the source link remains available if the feed cannot load. Other source news-page widgets are unchanged.
 - Copyright years use the current year at build time and update in the browser without redeployment, including on return to an open tab. These enhancements apply to English and Arabic footers, search and the 404 page.
 - Two old articles contain escaped HTML in image URLs, so those images are already broken on WordPress. Their existing appearance is retained; exact cases are recorded in `migration/source-issues.json`.
 - The original CashU request page's logo URL returns an HTML error page instead of an image; its missing-logo appearance is retained.

@@ -9,6 +9,8 @@
 // Language switcher links carry the hrefs below and are filled per page.
 import { load } from 'cheerio';
 import { markCurrent, renderMega, renderMobile, renderNav } from './menus.mjs';
+import { newsBlock } from '../footer/markup.mjs';
+import { feedSettings } from '../footer/news.mjs';
 
 export const ALT_EN = '#fxem-alternate-en';
 export const ALT_AR = '#fxem-alternate-ar';
@@ -48,7 +50,9 @@ export function renderFooter(template, widgets, menus, { path, wordpressId }) {
   const slots = new Map();
   for (const w of [...widgets].sort((a, b) => a.position - b.position)) {
     const key = `<!--fxem:footer:${w.options.area ?? 'above'}:${w.column_index}-->`;
-    const html = w.kind === 'menu' ? w.html.replace('<!--fxem:nav-->', renderNav(menus.get(w.menu_id) ?? [])) : w.html;
+    const html = w.kind === 'menu' ? w.html.replace('<!--fxem:nav-->', renderNav(menus.get(w.menu_id) ?? []))
+      : w.kind === 'news' ? newsBlock(w.html, feedSettings(w.options.feed).feed)
+      : w.html;
     slots.set(key, (slots.get(key) ?? '') + html);
   }
   const html = template.replace(/<!--fxem:footer:[a-z]+:\d-->/g, marker => slots.get(marker) ?? '');

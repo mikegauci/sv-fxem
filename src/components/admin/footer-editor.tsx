@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { SectionEditor } from "@/components/admin/section-editor";
 import {
+  checkFeed,
   saveFooter,
   type FooterWidgetInput,
 } from "@/app/(cms)/admin/(panel)/menus/actions";
+import { defaultFeed } from "@/lib/footer/news.mjs";
 
 type MenuOption = { id: string; name: string };
 
@@ -208,9 +210,12 @@ export function FooterEditor({
                 )}
               </div>
             ) : w.kind === "news" ? (
-              <p className="text-muted text-xs">
-                Shows the latest CNBC finance headlines automatically.
-              </p>
+              <NewsFeedFields
+                feed={(w.options.feed as Feed | undefined) ?? defaultFeed}
+                onChange={(feed) =>
+                  patch(w.id, { options: { ...w.options, feed } })
+                }
+              />
             ) : (
               <SectionEditor
                 section={{
@@ -302,6 +307,110 @@ export function FooterEditor({
           </p>
         )}
       </div>
+    </div>
+  );
+}
+
+type Feed = typeof defaultFeed;
+
+const input = "mt-1 block w-full rounded border border-black/20 p-2";
+
+// The news block's RSS feed: where headlines come from and how many show.
+function NewsFeedFields({
+  feed,
+  onChange,
+}: {
+  feed: Feed;
+  onChange: (feed: Feed) => void;
+}) {
+  const [result, setResult] = useState<string[] | string | null>(null);
+  const [checking, start] = useTransition();
+  const set = (p: Partial<Feed>) => {
+    onChange({ ...feed, ...p });
+    setResult(null);
+  };
+  return (
+    <div className="space-y-2 text-xs">
+      <p className="text-muted">
+        Shows the latest headlines from an RSS feed, refreshed every 10
+        minutes.
+      </p>
+      <label className="block font-semibold">
+        Feed address (RSS or Atom)
+        <input
+          dir="ltr"
+          className={input}
+          value={feed.url}
+          onChange={(e) => set({ url: e.target.value.trim() })}
+        />
+      </label>
+      <div className="grid grid-cols-[1fr_auto] gap-2">
+        <label className="block font-semibold">
+          Source name
+          <input
+            className={input}
+            value={feed.source}
+            onChange={(e) => set({ source: e.target.value })}
+          />
+        </label>
+        <label className="block font-semibold">
+          Headlines
+          <select
+            className={input}
+            value={feed.count}
+            onChange={(e) => set({ count: Number(e.target.value) })}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+              <option key={n}>{n}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <label className="block font-semibold">
+        Source link (shown until headlines load)
+        <input
+          dir="ltr"
+          className={input}
+          value={feed.sourceUrl}
+          onChange={(e) => set({ sourceUrl: e.target.value.trim() })}
+        />
+      </label>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          disabled={checking}
+          className="text-brand underline"
+          onClick={() =>
+            start(async () => {
+              const r = await checkFeed(feed);
+              setResult("error" in r ? r.error : r.titles);
+            })
+          }
+        >
+          {checking ? "Checking…" : "Check feed"}
+        </button>
+        <button
+          type="button"
+          className="underline"
+          onClick={() => set(defaultFeed)}
+        >
+          Use CNBC finance news
+        </button>
+      </div>
+      {typeof result === "string" && (
+        <p role="status" className="text-coral">
+          {result}
+        </p>
+      )}
+      {Array.isArray(result) && (
+        <ul role="status" className="list-disc ps-4 text-emerald-700">
+          {result.map((t) => (
+            <li key={t} dir="auto">
+              {t}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

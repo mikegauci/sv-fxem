@@ -9,7 +9,7 @@ Bilingual (English + Arabic, RTL) site for FXEM on **Next.js + Supabase (Vercel)
 - Never commit `.env`/`.env.local` (CurrentDesk and Mailjet credentials). The repo is public.
 - Every piece of content exists per language: pages and categories pair through `translation_id`; menus (`location`) and footer widgets are per language. The editor toggles EN/AR.
 - One admin to start: mikegauci@gmail.com (username `admin`).
-- One PR per CMS stage (branch `pr/NN-name`): 01 foundation, 02 content import, 03 site reads from Supabase, 04 page editor (sections + rich text, SEO), 05 menus + footer, 06 news, 07 checks + preview deploy.
+- One PR per CMS stage (branch `pr/NN-name`): 01 foundation, 02 content import, 03 site reads from Supabase, 04 page editor (sections + rich text, SEO), 05 menus + footer, 06 news feed (the site's news is the footer RSS block; the 3 old WordPress posts are edited under Pages), 07 checks + preview deploy.
 
 ## Conventions
 

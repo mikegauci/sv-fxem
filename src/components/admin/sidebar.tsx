@@ -12,7 +12,6 @@ const sections: { title: string; items: Item[] }[] = [
     items: [
       { label: "Dashboard", href: "/admin/", ready: true },
       { label: "Pages", href: "/admin/pages/", ready: true },
-      { label: "News", href: "/admin/news/", ready: false },
       { label: "Menus", href: "/admin/menus/", ready: true },
       { label: "Footer", href: "/admin/footer/", ready: true },
     ],

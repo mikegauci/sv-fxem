@@ -10,6 +10,7 @@ export const instant = false;
 
 const KINDS = {
   page: "Pages",
+  post: "Blog posts",
   standalone: "Forms",
   archive: "Archives",
 } as const;
@@ -26,7 +27,6 @@ export default async function Pages({
     .select(
       "id, path, title, status, kind, language, translation_id, updated_at",
     )
-    .neq("kind", "post")
     .order("path");
   if (error) throw error;
   const other = language === "en" ? "ar" : "en";

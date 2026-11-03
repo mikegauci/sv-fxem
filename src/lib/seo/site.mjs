@@ -9,15 +9,19 @@ export const urlOf = slug => new URL(pathOf(slug), origin).href;
 // Vercel preserves incoming queries on redirects. Never redirect a homepage
 // short link back to the same path with its matching query still attached.
 export const shortLinkPattern = page => page.slug === '' ? null : page.slug === 'ar' ? '^/(?:index\\.php)?$' : '^/(?:ar/)?(?:index\\.php)?$';
-export const indexable = page => page.slug !== '404' && page.kind !== 'standalone' && page.kind !== 'archive' && !/account-created-successfully$/.test(page.slug);
+export const indexable = page => page.slug !== '404' && page.kind !== 'standalone' && page.kind !== 'archive' && !page.seo?.noindex && !/account-created-successfully$/.test(page.slug);
+// CMS pages carry their own SEO fields; the original inventory uses metadata.mjs.
 export function details(page) {
+  if (page.seo?.title) return { title: page.seo.title, description: page.seo.description ?? '' };
   const row = metadata[baseOf(page.slug)];
   if (!row) throw Error(`Missing SEO metadata: ${page.slug}`);
   const offset = languageOf(page.slug) === 'ar' ? 2 : 0;
   return { title: row[offset], description: row[offset + 1] };
 }
+// Language versions of a page: CMS pages are linked by translation_id.
 export function alternates(page, pages) {
-  return pages.filter(p => baseOf(p.slug) === baseOf(page.slug)).map(p => ({ language: languageOf(p.slug), url: urlOf(p.slug) }));
+  const same = page.translation_id ? p => p.translation_id === page.translation_id : p => baseOf(p.slug) === baseOf(page.slug);
+  return pages.filter(same).map(p => ({ language: languageOf(p.slug), url: urlOf(p.slug) }));
 }
 export const xml = value => String(value).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
 export function sitemap(pages) {

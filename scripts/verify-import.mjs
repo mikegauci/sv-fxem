@@ -41,6 +41,7 @@ for (const route of routes()) {
     if (!sameMarkup(footer, source.footer)) problems.push(`/${route.slug}: footer differs ${firstDifference(source.footer, footer)}`);
   }
   for (const key of ['head', 'scripts']) if (page.layout[key] !== source[key]) problems.push(`/${route.slug}: ${key} differs`);
+  for (const key of ['htmlAttributes', 'bodyAttributes']) if (JSON.stringify(page.layout[key]) !== JSON.stringify(Object.entries(source[key] || {}))) problems.push(`/${route.slug}: ${key} differ`);
   checked++;
 }
 console.log(`Supabase: ${pages.length} pages, ${sections.length} sections, ${menus.length} menus, ${items.length} menu items, ${widgets.length} footer widgets, ${media.length} media files.`);

@@ -175,7 +175,8 @@ for (const route of inventory) {
     title: source.title.replace(/\s*[–|]\s*FXEM\s*$/, '').trim() || title, kind: route.kind, status: 'published',
     seo: { title, description },
     layout: {
-      head: source.head, htmlAttributes: source.htmlAttributes, bodyAttributes: source.bodyAttributes, scripts: source.scripts,
+      // Attribute lists as [name, value] pairs: jsonb does not keep object key order.
+      head: source.head, htmlAttributes: Object.entries(source.htmlAttributes || {}), bodyAttributes: Object.entries(source.bodyAttributes || {}), scripts: source.scripts,
       skipLink: source.skipLink, standalone: Boolean(source.standalone), contentShell: shell, sourceUrl: source.sourceUrl ?? null,
       alternates: { en: null, ar: null, ...Object.fromEntries(alternates(route, inventory).map(a => [a.language, decodeURI(new URL(a.url).pathname)])) },
       wpmlTouch: (source.header || '').includes('wpml-ls-touch-device'),

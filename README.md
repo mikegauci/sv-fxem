@@ -2,7 +2,7 @@
 
 The English and Arabic site at `https://sv.fxem.com/`, rebuilt on **Next.js + Supabase** (Vercel) with an in-house bilingual CMS modelled on the Rotta and Battery Factory rebuilds. The site has 72 content routes: 37 English and 35 Arabic.
 
-The CMS is being built in stages (one PR each): foundation → content import → site reads from Supabase → page editor → menus and footer → news. Until the import lands, public pages are rendered from the original page snapshots in `src/data/pages/` and `src/content/`, with the same markup as the earlier Astro preview (`node scripts/compare-parity.mjs <astro output dir>` checks every page).
+The CMS is being built in stages (one PR each): foundation → content import → site reads from Supabase → page editor → menus and footer → news. Public pages are rendered from the CMS content in Supabase, with the same markup as the earlier Astro preview (`node scripts/compare-parity.mjs <astro output dir>` checks every page). The original page snapshots in `src/data/pages/` and `src/content/` remain as the import source.
 
 ## Scope
 
@@ -93,7 +93,7 @@ Content import (CMS stage 2): `node --env-file=.env.local scripts/import-content
 
 `scripts/prebuild.mjs` runs before `dev` and `build`: it bundles the browser form scripts into `public/_fxem/` and writes `src/generated/routing.json` for the proxy.
 
-- Public pages: `src/app/[[...path]]/route.ts` renders each page snapshot (`src/lib/site/`), applies the SEO layer (`src/lib/seo/document.mjs`) and caches the result (`"use cache"`, tag `pages`). Unknown paths get the bilingual 404 with HTTP 404. Search is `src/app/search` and `src/app/ar/search`.
+- Public pages: `src/app/[[...path]]/route.ts` loads the published page, its sections and the language's header/footer from Supabase (`src/lib/site/content.ts`), renders them (`render.ts`, `chrome.mjs`), applies the SEO layer (`src/lib/seo/document.mjs`) and caches the result (`"use cache"`, tags `cms`, `cms:page:<path>`, `cms:chrome:<lang>`, `cms:routes`). Admin saves call `revalidateContent()` (`src/lib/site/revalidate.ts`). Drafts are not public. Unknown paths get the bilingual 404 with HTTP 404. Search is `src/app/search` and `src/app/ar/search`.
 - `src/proxy.ts`: WordPress short links (`?p=`, `?page_id=`), `?lang=`, `?s=` on the homepages, `/index.php`, the `redirects` table, the `X-Robots-Tag` policy, and the Supabase session refresh for `/admin` and `/auth`.
 - CMS: `src/app/(cms)/admin` (sign-in at `/admin/login/`). Dashboard, Media, Users and Redirects are live; Pages, News, Menus and Footer follow in later PRs.
 - Database: SQL in `supabase/migrations/`, applied with the Supabase connector to project `sv-fxem` (ref `ugzcbnjgftthksxeglqc`, eu-central-1). English and Arabic versions of a page share a `translation_id`; menus and footer widgets are per language.
@@ -111,7 +111,7 @@ The original visual assets and browser-side vendor scripts are in `public/assets
 
 ## SEO and launch checks
 
-Every rendered page passes through `src/lib/seo/document.mjs` (dev and production alike). Source snapshots retain their original content; the served HTML receives the SEO layer.
+Every rendered page passes through `src/lib/seo/document.mjs` (dev and production alike). Titles and descriptions come from each page's SEO fields in the CMS (imported from `src/lib/seo/metadata.mjs`); language links come from the pages' translation groups. Content is stored unchanged; the served HTML receives the SEO layer.
 
 - `src/lib/seo/metadata.mjs` contains individually written English and Arabic titles/descriptions for all 72 content routes. Visible copy is unchanged.
 - Canonicals use `https://sv.fxem.com` and preserve existing permalink paths. Language alternatives are reciprocal and generated from the migrated inventory, with English as x-default. The two legacy Arabic category slugs are explicitly paired with their English equivalents.

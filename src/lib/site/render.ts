@@ -1,14 +1,28 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { seoDocument } from "@/lib/seo/document.mjs";
+import { pathOf } from "@/lib/seo/site.mjs";
 import {
   renderSnapshot,
   attributes,
   siteStyles,
   footer,
 } from "@/lib/site/document.mjs";
-import { routes, snapshot } from "@/lib/site/snapshots.mjs";
-import { searchIndex, searchShells } from "@/lib/search/pages.mjs";
+import {
+  renderContent,
+  renderFooter,
+  renderHeader,
+} from "@/lib/site/chrome.mjs";
+import {
+  chromeMenus,
+  pageContent,
+  searchablePages,
+  siteChrome,
+  siteRoutes,
+  type Language,
+  type Route,
+} from "@/lib/site/content";
+import { buildSearchIndex, buildSearchShell } from "@/lib/search/pages.mjs";
 import { searchPages, searchPath } from "@/lib/search/query.mjs";
 
 export type Rendered = { status: number; html: string };
@@ -22,28 +36,78 @@ const escape = (value: unknown) =>
       ]!,
   );
 
-export function pagePaths() {
-  return routes().map((page) => page.slug);
+export async function pagePaths() {
+  return (await siteRoutes()).map((page) => page.slug);
+}
+
+// Paths of a page's language versions, from its translation group.
+function languageLinks(page: Route, routes: Route[]) {
+  const links: Record<Language, string | null> = { en: null, ar: null };
+  for (const r of routes)
+    if (r.translation_id === page.translation_id)
+      links[r.language] = pathOf(r.slug);
+  return links;
+}
+
+// A page rebuilt from the CMS in the shape of an original snapshot: theme
+// head and attributes plus rendered header, content and footer.
+async function composePage(slug: string) {
+  const [page, routes] = await Promise.all([pageContent(slug), siteRoutes()]);
+  if (!page) return null;
+  const chrome = await siteChrome(page.language);
+  const context = {
+    path: pathOf(slug),
+    wordpressId: page.wp_id,
+    alternates: languageLinks(page, routes),
+    home: slug === "" || slug === "ar",
+    touch: Boolean(page.layout.wpmlTouch),
+  };
+  const standalone = page.layout.standalone;
+  return {
+    page,
+    routes,
+    snapshot: {
+      ...page.layout,
+      slug,
+      title: page.title,
+      content: renderContent(page.layout.contentShell, page.sections),
+      header: standalone
+        ? ""
+        : renderHeader(chrome.header, chrome.primary, context),
+      footer: standalone
+        ? ""
+        : renderFooter(
+            chrome.footer,
+            chrome.widgets,
+            chromeMenus(chrome),
+            context,
+          ),
+    },
+  };
 }
 
 // One public page, cached until its content changes.
 export async function renderPage(slug: string): Promise<Rendered> {
   "use cache";
   cacheLife("max");
-  cacheTag("pages", `page:${slug}`);
-  const page = snapshot(slug);
-  if (!page) return renderNotFound();
-  const inventory = routes();
-  const route = inventory.find((p) => p.slug === slug)!;
-  const html = await seoDocument(renderSnapshot(page), route, inventory);
+  cacheTag("cms", `cms:page:${slug}`);
+  const composed = await composePage(slug);
+  if (!composed) return renderNotFound();
+  // Menus, footer and language links appear on every page.
+  cacheTag(`cms:chrome:${composed.page.language}`, "cms:routes");
+  const html = await seoDocument(
+    renderSnapshot(composed.snapshot),
+    composed.page,
+    composed.routes,
+  );
   return { status: 200, html };
 }
 
 export async function renderNotFound(): Promise<Rendered> {
   "use cache";
   cacheLife("max");
-  cacheTag("pages");
-  const home = snapshot("")!;
+  cacheTag("cms");
+  const home = (await composePage(""))!.snapshot;
   const styles = home.head
     .replace(/<title>[\s\S]*?<\/title>/g, "")
     .replace(/<link[^>]*(?:hreflang|rel="canonical")[^>]*>/g, "")
@@ -52,14 +116,38 @@ export async function renderNotFound(): Promise<Rendered> {
   return { status: 404, html };
 }
 
-export function renderSearch(
+// Search index and result-page shells, cached with the content.
+async function searchData(language: Language) {
+  "use cache";
+  cacheLife("max");
+  cacheTag("cms");
+  const pages = await searchablePages();
+  const index = buildSearchIndex(
+    pages.map((p) => ({
+      slug: p.path,
+      kind: p.kind,
+      seo: p.seo,
+      title: p.title,
+      content: renderContent(
+        (p.layout as { contentShell: string }).contentShell,
+        p.page_sections,
+      ),
+    })),
+  );
+  const archive = await composePage(
+    language === "ar" ? "ar/category/posts-ar" : "category/posts",
+  );
+  return { index, shell: buildSearchShell(archive!.snapshot, language) };
+}
+
+export async function renderSearch(
   language: "en" | "ar",
   query: string | null,
   requestedPage: string | null,
-): string {
-  const shell = searchShells()[language];
+): Promise<string> {
+  const { index, shell } = await searchData(language);
   const result = searchPages(
-    searchIndex(),
+    index,
     query,
     language,
     Number(requestedPage) || 1,

@@ -12,14 +12,9 @@ const nextConfig: NextConfig = {
       ),
     ],
   },
-  // Page snapshots and theme CSS are read from disk at request time.
+  // Theme CSS is read from disk at request time (SEO heading styles).
   outputFileTracingIncludes: {
-    "/**": [
-      "./src/data/pages/**",
-      "./src/content/**",
-      "./migration/routes.json",
-      "./public/assets/*.css",
-    ],
+    "/**": ["./public/assets/*.css"],
   },
   // Safety cap for admin uploads through Server Actions.
   experimental: { serverActions: { bodySizeLimit: "4mb" } },

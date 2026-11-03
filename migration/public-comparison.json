@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-10-29T15:08:28.553Z",
+  "url": "https://sv-fxem.vercel.app",
+  "deploymentId": "dpl_DJZFMBeXksr5GyNJRy9vTN4yFrhJ",
+  "publicAccessVerified": true,
+  "anonymousHttpStatus": 200,
+  "verifiedPaths": [
+    "/",
+    "/ar/",
+    "/open-live-account/",
+    "/become-our-partner/",
+    "/search/?s=forex"
+  ],
+  "indexing": "noindex, nofollow",
+  "productionDomain": "https://sv.fxem.com",
+  "productionStillWordPress": true,
+  "productionDnsChanged": false,
+  "footer": {
+    "automaticCopyrightYear": true,
+    "feedSource": "CNBC Finance",
+    "feedItems": 3,
+    "headlineLines": 2,
+    "newsBlockHeightPx": 180,
+    "liveFeedVerified": true,
+    "publicationDates": true,
+    "localizedDates": true,
+    "equalDesktopColumns": true,
+    "originalDesktopFooterHeightPx": 377.859375,
+    "verifiedDesktopFooterHeightPx": 377.859375,
+    "mobileEnglishAndArabicWidthPx": 390,
+    "mobileHorizontalOverflow": false,
+    "allThreeDatesVisible": true
+  }
+}

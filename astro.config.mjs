@@ -5,6 +5,7 @@ import { allowedDomains } from './src/lib/security/hosts.mjs';
 Object.assign(process.env, loadEnv(process.env.NODE_ENV || 'development', process.cwd(), ['CURRENTDESK_', 'CONTACT_', 'MAILJET_']));
 export default defineConfig({
   site: 'https://sv.fxem.com',
+  compressHTML: true,
   output: 'static',
   adapter: vercel({ maxDuration: 60 }),
   security: { allowedDomains: allowedDomains() },

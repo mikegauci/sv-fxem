@@ -33,7 +33,7 @@ for (const page of pages) {
 assert.equal(await fs.readFile(root + '/sitemap.xml','utf8'), sitemap(pages));
 const config = JSON.parse(await fs.readFile('.vercel/output/config.json', 'utf8'));
 for (const rule of config.routes.filter(r => r.status === 308 && r.headers?.Location)) assert.equal(new RegExp(rule.src).test(new URL(rule.headers.Location, 'https://sv.fxem.com').pathname), false, 'Self-redirect in output routing');
-assert.equal(config.routes.some(r => r.src === '/.*' && r.headers?.['X-Robots-Tag']), !isProduction(process.env));
+assert.equal(config.routes.some(r => r.src === '/.*' && !r.has?.length && r.headers?.['X-Robots-Tag']), !isProduction(process.env));
 assert.ok(config.routes.some(r => r.dest === '/404.html' && r.status === 404));
 const notFound = load(await fs.readFile(root + '/404.html','utf8')); assert.equal(notFound('meta[name=robots]').attr('content'), 'noindex, nofollow');
 const secrets = [];

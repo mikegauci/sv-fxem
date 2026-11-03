@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { NodeApp } from 'astro/app/node';
+import { createRequest } from 'astro/app/node';
 import { allowedDomains } from '../src/lib/security/hosts.mjs';
 const host = 'sv-fxem-fixture-mikegaucis-projects.vercel.app';
 function request(headers, patterns) {
-  return NodeApp.createRequest({ method: 'GET', url: '/api/currentdesk/demo', headers, socket: {} }, { allowedDomains: patterns });
+  return createRequest({ method: 'GET', url: '/api/currentdesk/demo', headers, socket: {} }, { allowedDomains: patterns });
 }
 test('Astro reconstructs the exact HTTPS deployment origin behind Vercel', () => {
   const headers = { host, 'x-forwarded-host': host, 'x-forwarded-proto': 'https' };

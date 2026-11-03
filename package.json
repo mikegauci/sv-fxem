@@ -5,18 +5,30 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --host 0.0.0.0",
-    "build": "astro build && node scripts/build-seo.mjs",
+    "build": "node scripts/build-search-index.mjs && astro build && node scripts/build-seo.mjs",
     "preview": "astro preview --host 0.0.0.0",
     "import:homepage": "node scripts/import-homepage.mjs",
     "import:site": "node scripts/import-site.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "predev": "node scripts/build-search-index.mjs"
   },
   "dependencies": {
-    "@astrojs/vercel": "9.0.4",
-    "astro": "5.18.2"
+    "@astrojs/vercel": "11.0.17",
+    "astro": "7.4.4"
   },
   "devDependencies": {
     "cheerio": "1.1.2",
     "postcss": "8.5.32"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "overrides": {
+    "@vercel/routing-utils": {
+      "path-to-regexp": "6.3.0"
+    },
+    "@vercel/cli-config": {
+      "zod": "4.6.7"
+    }
   }
 }

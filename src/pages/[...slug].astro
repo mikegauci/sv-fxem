@@ -1,4 +1,5 @@
 ---
+import Footer from '../components/Footer.astro';
 import CurrentDeskFormScripts from '../components/CurrentDeskFormScripts.astro';
 import ContactFormScripts from '../components/ContactFormScripts.astro';
 export function getStaticPaths() {
@@ -16,7 +17,7 @@ const { page } = Astro.props;
       <div class="hfeed site" id="page">
         <Fragment set:html={page.header} />
         <Fragment set:html={page.content} />
-        <Fragment set:html={page.footer} />
+        <Footer content={page.footer} />
       </div>
     </>}
     <Fragment set:html={page.scripts} />

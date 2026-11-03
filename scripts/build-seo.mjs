@@ -58,6 +58,7 @@ for (const page of pages) {
   function meta(attrs) { $('head').append($('<meta>').attr(attrs)); }
   $('head').append($('<title></title>').text(title)); meta({ name: 'description', content: description }); meta({ name: 'robots', content: robotsDirective(page, process.env) });
   $('head').append($('<link rel="canonical">').attr('href', canonical));
+  $('form[role=search]').attr('action', lang === 'ar' ? '/ar/search/' : '/search/');
   const links = alternates(page, pages);
   for (const link of links) $('head').append($('<link rel="alternate">').attr({ hreflang: link.language, href: link.url }));
   const en = links.find(link => link.language === 'en');
@@ -88,10 +89,15 @@ const config = JSON.parse(await fs.readFile(configPath, 'utf8'));
 const rules = [];
 if (!isProduction(process.env)) rules.push({ src: '/.*', headers: { 'X-Robots-Tag': 'noindex, nofollow' }, continue: true });
 else {
+  // Production provider aliases are review URLs, not the canonical public site.
+  rules.push({ src: '/.*', has: [{ type: 'host', value: '.*\\.vercel\\.app' }], headers: { 'X-Robots-Tag': 'noindex, nofollow' }, continue: true });
   rules.push({ src: '^/api/.*$', headers: { 'X-Robots-Tag': 'noindex, nofollow' }, continue: true });
+  rules.push({ src: '^/(?:ar/)?search/?$', headers: { 'X-Robots-Tag': 'noindex, nofollow' }, continue: true });
   for (const page of pages.filter(p => !indexable(p))) rules.push({ src: '^' + pathOf(page.slug).replace(/\/$/, '/?$') , headers: { 'X-Robots-Tag': 'noindex, nofollow' }, continue: true });
 }
 // Preserve WordPress short links without changing existing canonical permalinks.
+rules.push({ src: '^/$', has: [{ type: 'query', key: 's' }], status: 308, headers: { Location: '/search/' } });
+rules.push({ src: '^/ar/?$', has: [{ type: 'query', key: 's' }], status: 308, headers: { Location: '/ar/search/' } });
 let shortLinks = 0;
 for (const page of pages) {
   const other = alternates(page, pages).find(p => p.language !== languageOf(page.slug));

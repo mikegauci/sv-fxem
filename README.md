@@ -72,7 +72,8 @@ The contact tests mock Mailjet requests, including success, failures, abuse cont
 
 This phase requires unchanged content and design rather than repairing unrelated source issues:
 
-- The footer and news pages display the source site's unavailable RSS-feed messages.
+- The shared footer replaces the failed DailyFX widget with three CNBC finance headlines, fetched through `/api/footer-news`. Headlines are clamped to two lines with a localized publication date underneath, inside a 180px block that fits within the existing footer navigation height; footer grid columns have zero minimum widths so long headlines cannot squeeze other columns; the source link remains available if the feed cannot load. Other source news-page widgets are unchanged.
+- Copyright years use the current year at build time and update in the browser without redeployment, including on return to an open tab. These enhancements apply to English and Arabic footers, search and the 404 page.
 - Two old articles contain escaped HTML in image URLs, so those images are already broken on WordPress. Their existing appearance is retained; exact cases are recorded in `migration/source-issues.json`.
 - The original CashU request page's logo URL returns an HTML error page instead of an image; its missing-logo appearance is retained.
 - The original `/credit-card-request/` destination returns 404. Its source link is retained without inventing a replacement page or payment integration.

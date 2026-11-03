@@ -8,3 +8,5 @@ dist/
 migration/source/
 .DS_Store
 coverage/
+src/data/search-index.json
+src/data/search-shells.json

@@ -1,4 +1,4 @@
-// Content preview only: never post comments to the production WordPress site.
+// Retained legacy forms stay disabled until processing is deliberately enabled.
 document.querySelectorAll('form[data-preview-form]').forEach(form => {
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -11,7 +11,7 @@ document.querySelectorAll('form[data-preview-form]').forEach(form => {
     }
     const arabic = document.documentElement.lang.startsWith('ar');
     status.textContent = form.dataset.previewForm === 'deposit'
-      ? (arabic ? 'هذه معاينة للتصميم فقط. المدفوعات غير مفعّلة.' : 'This is a design preview. Payments are not enabled.')
-      : (arabic ? 'التعليقات غير مفعّلة في هذه المعاينة.' : 'Comments are not enabled on this preview.');
+      ? (arabic ? 'طلبات كاش يو غير متاحة حالياً. يرجى التواصل عبر support@fxem.com.' : 'CashU requests are currently unavailable. Please contact support@fxem.com.')
+      : (arabic ? 'التعليقات عبر الموقع غير متاحة حالياً.' : 'Online comments are currently unavailable.');
   });
 });

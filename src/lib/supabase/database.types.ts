@@ -513,6 +513,17 @@ export type Database = {
         Args: { target_user: string };
         Returns: undefined;
       };
+      admin_save_footer: {
+        Args: {
+          new_widgets: Json;
+          target_language: Database["public"]["Enums"]["site_language"];
+        };
+        Returns: undefined;
+      };
+      admin_save_menu: {
+        Args: { new_items: Json; target_menu: string };
+        Returns: undefined;
+      };
       admin_save_page: {
         Args: { fields: Json; new_sections: Json; target_page: string | null };
         Returns: string;

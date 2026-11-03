@@ -155,7 +155,8 @@ function splitContent(content) {
     if (!s.html.trim()) { if (merged.length) merged.at(-1).html += s.html; else lead += s.html; }
     else { merged.push({ html: lead + s.html }); lead = ''; }
   }
-  if (lead) merged.length ? (merged.at(-1).html += lead) : merged.push({ html: lead });
+  if (lead && merged.length) merged.at(-1).html += lead;
+  else if (lead) merged.push({ html: lead });
   return { shell: content.slice(0, innerStart) + '<!--fxem:sections-->' + content.slice(innerEnd), sections: merged };
 }
 

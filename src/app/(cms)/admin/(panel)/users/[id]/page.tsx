@@ -4,6 +4,9 @@ import { UserEditor } from "@/components/admin/user-editor";
 import { requireAdminPage } from "@/lib/auth/admin";
 import { createClient } from "@/lib/supabase/server";
 import { saveUser, deleteUser } from "../actions";
+
+// Reads the session on every request, so skip instant-navigation validation.
+export const instant = false;
 export const metadata = { title: "Edit user" };
 export default async function EditUserPage({
   params,

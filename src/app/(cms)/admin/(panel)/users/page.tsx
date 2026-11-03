@@ -4,6 +4,9 @@ import { requireAdminPage } from "@/lib/auth/admin";
 import { userListParams, type UserList } from "@/lib/admin/users";
 import { createClient } from "@/lib/supabase/server";
 
+// Reads the session on every request, so skip instant-navigation validation.
+export const instant = false;
+
 export const metadata: Metadata = { title: "Users" };
 export default async function UsersPage({
   searchParams,

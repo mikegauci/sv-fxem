@@ -21,6 +21,8 @@
     "@tiptap/react": "^3.32.0",
     "@tiptap/starter-kit": "^3.32.0",
     "cheerio": "1.1.2",
+    "domhandler": "5.0.3",
+    "htmlparser2": "10.1.0",
     "next": "16.4.3",
     "postcss": "8.5.32",
     "react": "19.3.0",

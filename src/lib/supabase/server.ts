@@ -1,9 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { env } from "@/lib/env";
 import type { Database } from "@/lib/supabase/database.types";
 
 export async function createClient() {
+  // The auth client reads the clock, so mark callers as request-time first.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient<Database>(

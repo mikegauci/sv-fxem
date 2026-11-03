@@ -77,6 +77,8 @@ async function AdminOnly({ children }: { children: React.ReactNode }) {
 }
 
 async function AdminNavigation() {
+  // The auth client reads the clock, so mark this as request-time first.
+  await connection();
   const user = await getCurrentUser();
   if (user?.role !== "admin") return null;
   return <AdminSidebar capabilities={user.adminCapabilities} />;

@@ -49,8 +49,13 @@ async function tableRules(): Promise<Map<string, Rule>> {
   return loading;
 }
 
+// Request paths arrive percent-encoded; rules store decoded (Arabic) paths.
 function normalize(path: string) {
-  const p = path.toLowerCase();
+  let p = path;
+  try {
+    p = decodeURIComponent(path);
+  } catch {}
+  p = p.toLowerCase();
   return p.endsWith("/") ? p : `${p}/`;
 }
 

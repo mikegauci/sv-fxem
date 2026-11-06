@@ -146,3 +146,7 @@ A production launch still requires explicit authorization, domain/DNS cutover an
 ## Reverse-proxy host validation
 
 The form APIs rebuild the request URL from the forwarded host only when that host is on an exact allowlist (`src/lib/security/request.mjs`, `hosts.mjs`): the original site, the project domain and Vercel-provided deployment/branch aliases. Unknown hosts get a localhost origin, so the same-origin and CSRF checks reject them. Local HTTP hosts are trusted only outside Vercel. There is no wildcard trust for arbitrary Vercel tenants.
+
+## Supabase heartbeat
+
+Vercel calls `/api/cron/heartbeat/` daily at 08:00 UTC. Set `CRON_SECRET` in production before deployment. The endpoint reads one public page ID with a 10-second timeout, returns only status and timestamp, and rejects unauthenticated requests. Responses are not cached.
